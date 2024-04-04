@@ -11,3 +11,4 @@ pip install opencv-python
 download https://github.com/z-mahmud22/Dlib_Windows_Python3.x
 python -m pip install dlib-19.22.99-cp38-cp38-win_amd64.whl
 download https://github.com/tzutalin/dlib-android/blob/master/data/shape_predictor_68_face_landmarks.dat
+pip install mediapipe
