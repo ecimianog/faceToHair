@@ -1,0 +1,4 @@
+//Instala Material
+//https://kivymd.readthedocs.io/en/1.1.1/
+pip install kivymd  
+pip install tensorflow-addons
