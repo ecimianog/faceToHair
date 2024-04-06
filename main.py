@@ -1,62 +1,122 @@
+from kivymd.app import MDApp
+from kivy.lang import Builder
+from kivymd.uix.screen import MDScreen
+from kivy.core.window import Window
+from kivy.uix.image import Image
+from kivymd.uix.list import MDList,OneLineAvatarListItem,ImageLeftWidget
+from kivy.clock import Clock
+from kivy.graphics.texture import Texture
+from faceDetectorC import FaceDetector
+from detect import headPoints
+import time, os, PIL
 import cv2
-import numpy as np
-import dlib
-import headpose as hd
-import mediapipe as mp
+#import detectCopy
 
-print("Head Pose")
+#import mediapipe as mp
 
-mp_face_mesh = mp.solutions.face_mesh
-face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
-mp_drawing = mp.solutions.drawing_utils
-drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+Window.size = (350,900)
 
+Builder.load_file("homescreen.kv")
+class Homescreen(MDScreen):
+	def __init__(self,**kwargs):
+		super(Homescreen,self).__init__(**kwargs)
+		# GET SELECTOR FROM KV FILE CAMERA 
+		print("Starting program")
+    	#self.add_widget(Homescreen())
+		if not hasattr(self, 'mycamera'):
+			#self.mycamera = cv2.VideoCapture(0)
+			print('aquí 2')
+			self.myimage = Image()
+			self.add_widget(self.myimage)
+			self.resultbox = self.ids.resultbox
+			self.mybox = self.ids.mybox
+		print('Starting capture')
+		Clock.schedule_interval(self.load_video, 1.0/30.0)
 
-print("Starting program")
-cap = cv2.VideoCapture(0)
+	
+	
 
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
-print('Starting capture')
-
-# 
-while cap.isOpened():
-    # Se captura la pantalla
-    _, frame = cap.read()
-    _, frames = cap.read()
-    #print('Capture')
-    # Se captura en blanco y negro para facilitar el proceso
-    lookFront = hd.lookFront(frames)
-    if lookFront:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	def load_video(self, *args):
+		print('Capture1')
+		frame = headPoints()
+		buffer = cv2.flip(frame, 0).tobytes()
+		texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+		texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
+		self.myimage.texture = texture
+		print('Capture2')
+    
+	
+    
         
-        # La imagen se pasa al detector de la librería
-        faces = detector(gray)
-        # Se devuelven varios objetos
-        for face in faces:
-            # Se toma un objeto devuelto del que se toman las coordenadas
-            #print('Detect face')
-            x1 = face.left()
-            y1 = face.top()
-            x2 = face.right()
-            y2 = face.bottom()
-            # Se dibuja un rectángulo con las coordenadas
-            cv2.rectangle(frame, (x1,y1), (x2,y2), (0, 255, 0), 3)
-            
-            # Se pasa la imagen y el objeto face al predictor de marcas
-            landmarks = predictor(gray, face)
-            # Se recorren las marcas para dibujarlas sobre la imagen
-            for n in range(0, 68):
-                x = landmarks.part(n).x
-                y = landmarks.part(n).y
-                cv2.circle(frame, (x,y), 3, (255,0,0), -1)
-            
-            #print(face, landmarks)
-    
-    # Se muestra la imagen
-    cv2.imshow('Frame', frame)
-    
-    # Se sale con Esc
-    key = cv2.waitKey(1)
-    if key == 27:
-        break
+	def captureyouface(self):
+		# CREATE TIMESTAMP NOT FOR YOU FILE IMAGE
+		# THIS SCRIPT GET TIME MINUTES AND DAY NOW
+		print('self.mycamera', self.mycamera.texture)
+		path = "images"
+		# Check whether the specified path exists or not
+		if not os.path.exists(path):
+			os.makedirs(path)
+		path = path + "\myimage_" + time.strftime("%Y%m%d_%H%M%S") + ".png" 
+		
+
+		# AND EXPORT YOU CAMERA CAPTURE TO PNG IMAGE
+		self.mycamera.export_to_png(path)
+		self.myimage.source = path
+		self.resultbox.add_widget(
+			OneLineAvatarListItem(
+				ImageLeftWidget(
+					source=path,
+					size_hint_x=0.3,
+					size_hint_y=1,
+
+					# AND SET YOU WIDHT AND HEIGT YOU PHOTO
+					size=(300,300)
+
+					),
+				text=self.ids.name.text
+				)
+
+			)
+		self.mycamera.play = False
+		self.clear_widgets()
+		texture = self.mycamera.texture
+		size=texture.size
+		pixels = texture.pixels
+		pil_image=PIL.Image.frombytes(mode='RGBA', size=size,data=pixels)
+
+		self.add_widget(ResultScreen(path, pil_image))
+		#self.add_widget(ResultScreen(path, pil_image))
+		
+Builder.load_file("resultScreen.kv")
+class ResultScreen(MDScreen):
+	
+	def __init__(self, valor,imagen,**kwargs):
+		super(ResultScreen,self).__init__(**kwargs)
+		# GET SELECTOR FROM KV FILE CAMERA
+		print(valor)
+		self.val = valor
+		self.myimage =  self.ids.image
+		self.myimage.source = self.val
+		print('aquí 4')
+		self.mybox = self.ids.name2
+		self.mybox1 = self.ids.name3
+		self.myimage.texture = FaceDetector(valor)
+
+
+
+	def captureyouface(self):
+		# CREATE TIMESTAMP NOT FOR YOU FILE IMAGE
+		# THIS SCRIPT GET TIME MINUTES AND DAY NOW
+		print('vuelve')
+		self.clear_widgets()
+		self.add_widget(ResultScreen2('última',self.val))
+
+
+
+class MyApp(MDApp):
+	def build(self):
+		return Homescreen()
+
+if __name__ == "__main__":
+	MyApp().run()
+

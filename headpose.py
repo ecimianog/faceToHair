@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import dlib
 import mediapipe as mp
 
 
@@ -8,6 +7,9 @@ mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 mp_drawing = mp.solutions.drawing_utils
 drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+
+def took():
+    print('took')
 
 def lookFront(image):
     #print("Head Pose")
@@ -65,11 +67,11 @@ def lookFront(image):
             elif x > 10:
                 text = 'Looking up'
             else:
-                print('Forward')
+                #print('Forward')
                 return True
                 
                 
-            print(text, x, y)
+            #print(text, x, y)
             
             nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
             
@@ -82,7 +84,6 @@ def lookFront(image):
             cv2.putText(image, 'x: ' + str(np.round(x, 2)), (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             cv2.putText(image, 'y: ' + str(np.round(y, 2)), (500, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             cv2.putText(image, 'z: ' + str(np.round(z, 2)), (500, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            print(99)
             mp_drawing.draw_landmarks(
                 image=image,
                 landmark_list=face_landmarks,
@@ -90,8 +91,7 @@ def lookFront(image):
                 landmark_drawing_spec=drawing_spec,
                 connection_drawing_spec=drawing_spec
             )
-            print(56)
-            cv2.imshow('image', image)
+            #cv2.imshow('image', image)
     
             # Se sale con Esc
             key = cv2.waitKey(1)
