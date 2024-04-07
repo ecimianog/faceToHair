@@ -47,12 +47,12 @@ while cap.isOpened():
             for n in range(0, 68):
                 x = landmarks.part(n).x
                 y = landmarks.part(n).y
-                cv2.circle(frame, (x,y), 3, (255,0,0), -1)
+                cv2.circle(frame, (x,y), 1, (255,0,0), -1)
             
             #print(face, landmarks)
     
     # Se muestra la imagen
-    #cv2.imshow('Frame', frame)
+    cv2.imshow('Frame', frame)
     
     # Se sale con Esc
     key = cv2.waitKey(1)

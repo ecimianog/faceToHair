@@ -58,18 +58,17 @@ def lookFront(image):
             y = angles[1] * 360
             z = angles[2] * 360
             
+            text = ' - Mire de frente'
             if y < -10:
-                text = 'Looking left'
+                text = 'Izquierda' + text
             elif y > 10:
-                text = 'Looking right'
+                text = 'Derecha' + text
             elif x < -10:
-                text = 'Looking down'
+                text = 'Abajo' + text
             elif x > 10:
-                text = 'Looking up'
+                text = 'Arriba' + text
             else:
-                #print('Forward')
-                return True
-                
+                text = ''
                 
             #print(text, x, y)
             
@@ -78,7 +77,7 @@ def lookFront(image):
             p1 = (int(nose_2d[0]), int(nose_2d[1]))
             p2 = (int(nose_2d[0] + y * 10), int(nose_2d[1] - x * 10))
             
-            cv2.line(image, p1, p2, (255, 0, 0), 3)
+            #cv2.line(image, p1, p2, (255, 0, 0), 3)
             
             cv2.putText(image, text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
             cv2.putText(image, 'x: ' + str(np.round(x, 2)), (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
@@ -91,10 +90,10 @@ def lookFront(image):
                 landmark_drawing_spec=drawing_spec,
                 connection_drawing_spec=drawing_spec
             )
-            #cv2.imshow('image', image)
+            cv2.imshow('image', image)
     
             # Se sale con Esc
             key = cv2.waitKey(1)
             if key == 27:
                 break
-            return False
+            return True

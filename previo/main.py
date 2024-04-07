@@ -3,13 +3,9 @@ print('b')
 kivy.require('2.1.0')
 print('c')
 import cv2
-print(1)
 import mediapipe
-print(2)
 from kivy.app import App
-print(3)
 from kivy.uix.boxlayout import BoxLayout
-print(4)
 from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
@@ -25,10 +21,14 @@ class CamApp(App):
 		print("Starting program")
     	#self.add_widget(Homescreen())
 		self.img1 = Image()
+		print(1)
 		layout = BoxLayout()
 		layout.add_widget(self.img1)
+		print(2)
 		self.capture = cv2.VideoCapture(0)
+		print(3)
 		Clock.schedule_interval(self.load_video, 1.0/30.0)
+		print(4)
 		return layout
 		
 	
