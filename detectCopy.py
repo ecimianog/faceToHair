@@ -44,10 +44,15 @@ while cap.isOpened():
             # Se pasa la imagen y el objeto face al predictor de marcas
             landmarks = predictor(gray, face)
             # Se recorren las marcas para dibujarlas sobre la imagen
-            for n in range(0, 68):
+            for n in range(0, 28):
                 x = landmarks.part(n).x
                 y = landmarks.part(n).y
                 cv2.circle(frame, (x,y), 1, (255,0,0), -1)
+                
+            for n in range(29, 68):
+                x = landmarks.part(n).x
+                y = landmarks.part(n).y
+                cv2.circle(frame, (x,y), 1, (255,255,0), -1)
             
             #print(face, landmarks)
     
