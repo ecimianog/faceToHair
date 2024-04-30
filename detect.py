@@ -19,18 +19,25 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
 def getRatios(marks):
-    vA = np.array([marks[0].x,marks[0].y,marks[0].z,marks[4].x,marks[4].y,marks[4].z])
-    vB = np.array([marks[1].x,marks[1].y,marks[1].z,marks[7].x,marks[7].y,marks[7].z])
-    vC = np.array([marks[2].x,marks[2].y,marks[2].z,marks[6].x,marks[6].y,marks[6].z])
-    vD = np.array([marks[3].x,marks[3].y,marks[3].z,marks[5].x,marks[5].y,marks[5].z])
+    vAa = np.array([marks[0].x,marks[0].y,marks[0].z])
+    vAb = np.array([marks[4].x,marks[4].y,marks[4].z])
+    vBa = np.array([marks[1].x,marks[1].y,marks[1].z])
+    vBb = np.array([marks[7].x,marks[7].y,marks[7].z])
+    vCa = np.array([marks[2].x,marks[2].y,marks[2].z])
+    vCb = np.array([marks[6].x,marks[6].y,marks[6].z])
+    vDa = np.array([marks[3].x,marks[3].y,marks[3].z])
+    vDb = np.array([marks[5].x,marks[5].y,marks[5].z])
  
-    magA = math.sqrt(sum(pow(element, 2) for element in vA))
-    magB = math.sqrt(sum(pow(element, 2) for element in vB))
-    magC = math.sqrt(sum(pow(element, 2) for element in vC))
-    magD = math.sqrt(sum(pow(element, 2) for element in vD))
-    print(magA,magB,magC, magD)
-    print(vA, magA)
-    return magA 
+    #magA = math.sqrt(sum(pow(element, 2) for element in vA))
+    #magB = math.sqrt(sum(pow(element, 2) for element in vB))
+    #magC = math.sqrt(sum(pow(element, 2) for element in vC))
+    #magD = math.sqrt(sum(pow(element, 2) for element in vD))
+    #print(magA,magB,magC, magD)
+    print(vAa, vAb, np.inner(vAa,vAb))
+    print(vBa, vBb, np.inner(vBa,vBb))
+    print(vCa, vCb, np.inner(vCa,vCb))
+    print(vDa, vDb, np.inner(vDa,vDb))
+    return True 
  
 # 
 while cap.isOpened():
