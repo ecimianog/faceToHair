@@ -1,30 +1,48 @@
 import cv2
+import math
 import numpy as np
 import dlib
+import headpose as hd
+import mediapipe as mp
+
+print("Head Pose")
+
+mp_face_mesh = mp.solutions.face_mesh
+face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+mp_drawing = mp.solutions.drawing_utils
+drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+
 
 cap = cv2.VideoCapture(0)
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
-print("Head Pose")
-
-def headPoints():
-
-    
-
-    _, frame = cap.read()
-    #_, frames = cap.read()
-    
-    # 
-
+def getRatios(marks):
+    vA = np.array([marks[0].x,marks[0].y,marks[0].z,marks[4].x,marks[4].y,marks[4].z])
+    vB = np.array([marks[1].x,marks[1].y,marks[1].z,marks[7].x,marks[7].y,marks[7].z])
+    vC = np.array([marks[2].x,marks[2].y,marks[2].z,marks[6].x,marks[6].y,marks[6].z])
+    vD = np.array([marks[3].x,marks[3].y,marks[3].z,marks[5].x,marks[5].y,marks[5].z])
+ 
+    magA = math.sqrt(sum(pow(element, 2) for element in vA))
+    magB = math.sqrt(sum(pow(element, 2) for element in vB))
+    magC = math.sqrt(sum(pow(element, 2) for element in vC))
+    magD = math.sqrt(sum(pow(element, 2) for element in vD))
+    print(magA,magB,magC, magD)
+    print(vA, magA)
+    return magA 
+ 
+# 
+while cap.isOpened():
     # Se captura la pantalla
+    _, frame = cap.read()
+    _, frames = cap.read()
     #print('Capture')
     # Se captura en blanco y negro para facilitar el proceso
-    #lookFront = hd.lookFront(frames)
-    if True: #lookFront:
+    lookFront = hd.lookFront(frames)
+    if lookFront:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
+        getRatios(lookFront)
         # La imagen se pasa al detector de la librería
         faces = detector(gray)
         # Se devuelven varios objetos
@@ -41,12 +59,23 @@ def headPoints():
             # Se pasa la imagen y el objeto face al predictor de marcas
             landmarks = predictor(gray, face)
             # Se recorren las marcas para dibujarlas sobre la imagen
-            for n in range(0, 68):
+            for n in range(0, 28):
                 x = landmarks.part(n).x
                 y = landmarks.part(n).y
-                cv2.circle(frame, (x,y), 3, (255,0,0), -1)
-        return frame    
+                cv2.circle(frame, (x,y), 1, (255,0,0), -1)
+                
+            for n in range(29, 68):
+                x = landmarks.part(n).x
+                y = landmarks.part(n).y
+                cv2.circle(frame, (x,y), 1, (255,255,0), -1)
+            
             #print(face, landmarks)
     
     # Se muestra la imagen
+    cv2.imshow('Frame', frame)
+    
+    # Se sale con Esc
+    key = cv2.waitKey(1)
+    if key == 27:
+        break
     

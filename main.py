@@ -7,7 +7,7 @@ from kivymd.uix.list import MDList,OneLineAvatarListItem,ImageLeftWidget
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from faceDetectorC import FaceDetector
-from detect import headPoints
+from detectRep import headPoints
 import time, os, PIL
 import cv2
 #import detectCopy
