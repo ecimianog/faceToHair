@@ -1,5 +1,8 @@
+"kivy[base,media]" kivy_examples
+"kivy[sdl2]"
+kivymd
 opencv-python
+dlib-19.22.99-cp310-cp310-win_amd64.whl
 mediapipe
 tensorflow
 tensorflow_addons
-kivymd
