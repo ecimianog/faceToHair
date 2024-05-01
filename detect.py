@@ -1,23 +1,28 @@
 import cv2
-import math
 import numpy as np
 import dlib
 import headpose as hd
-import mediapipe as mp
 
 print("Head Pose")
-
-mp_face_mesh = mp.solutions.face_mesh
-face_mesh = mp_face_mesh.FaceMesh(
-    min_detection_confidence=0.5, min_tracking_confidence=0.5)
-mp_drawing = mp.solutions.drawing_utils
-drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
-
 
 cap = cv2.VideoCapture(1)
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+
+showThis = True
+
+
+def hidemd():
+    return hd.hidemd()
+
+
+def hidelib():
+    global showThis
+    showThis = not showThis
+    if not showThis:
+        cv2.destroyWindow('Imagen para mandar')
+    return showThis
 
 
 def getRatios(marks):
@@ -82,7 +87,8 @@ def headPoints():
                 #print(face, landmarks)
 
         # Se muestra la imagen
-        cv2.imshow('Frame', frame)
+        if showThis:
+            cv2.imshow('Imagen para mandar', frame)
 
         # Se sale con Esc
         key = cv2.waitKey(1)

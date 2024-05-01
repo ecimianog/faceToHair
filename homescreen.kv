@@ -17,8 +17,16 @@
                 hint_text:"Nombre"
                 font_size: 30
             MDRaisedButton:
-                text:"capture"
+                text:"Captura"
                 on_release:root.captureyouface()
+            MDRaisedButton:
+                id: HSLib
+                text:"Hide Lib"
+                on_release:root.hidelib()
+            MDRaisedButton:
+                id: HSMd
+                text:"Hide MD"
+                on_release:root.hidemd()
             MDList:
                 id:resultbox
             MDRaisedButton:
