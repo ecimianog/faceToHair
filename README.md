@@ -20,5 +20,8 @@ python3.10 -m pip install opencv-python
 python3.10 -m pip install mediapipe
 python3.10 -m pip install dlib-19.22.99-cp310-cp310-win_amd64.whl
 python3.10 -m pip install "kivy[sdl2]"
+python3.10 -m pip install kivysome
 cd faceToHair
 python3.10 main.py
+
+https://pictogrammers.com/library/mdi/

@@ -3,9 +3,8 @@ import numpy as np
 import dlib
 import headpose as hd
 
-print("Head Pose")
+print("Head Poses")
 
-cap = cv2.VideoCapture(1)
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
@@ -47,7 +46,7 @@ def getRatios(marks):
     return True
 
 
-def headPoints():
+def headPoints(cap):
     while cap.isOpened():
         # Se captura la pantalla
         _, frame = cap.read()
