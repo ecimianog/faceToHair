@@ -2,12 +2,14 @@ import cv2
 import numpy as np
 import dlib
 import headpose as hd
+import math
 
 print("Head Poses")
 
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor(
+    'requiredFiles\shape_predictor_68_face_landmarks.dat')
 
 showThis = True
 
@@ -25,24 +27,35 @@ def hidelib():
 
 
 def getRatios(marks):
-    vAa = np.array([marks[0].x, marks[0].y, marks[0].z])
-    vAb = np.array([marks[4].x, marks[4].y, marks[4].z])
-    vBa = np.array([marks[1].x, marks[1].y, marks[1].z])
-    vBb = np.array([marks[7].x, marks[7].y, marks[7].z])
-    vCa = np.array([marks[2].x, marks[2].y, marks[2].z])
-    vCb = np.array([marks[6].x, marks[6].y, marks[6].z])
-    vDa = np.array([marks[3].x, marks[3].y, marks[3].z])
-    vDb = np.array([marks[5].x, marks[5].y, marks[5].z])
-
+    pAr = np.array([marks[0].x, marks[0].y, marks[0].z])
+    pAl = np.array([marks[4].x, marks[4].y, marks[4].z])
+    pBr = np.array([marks[1].x, marks[1].y, marks[1].z])
+    pBl = np.array([marks[7].x, marks[7].y, marks[7].z])
+    pCr = np.array([marks[2].x, marks[2].y, marks[2].z])
+    pCl = np.array([marks[6].x, marks[6].y, marks[6].z])
+    pDr = np.array([marks[3].x, marks[3].y, marks[3].z])
+    pDl = np.array([marks[5].x, marks[5].y, marks[5].z])
+    vA = np.array([marks[0].x, marks[0].y, marks[0].z,
+                  marks[4].x, marks[4].y, marks[4].z])
     #magA = math.sqrt(sum(pow(element, 2) for element in vA))
+    horizA = np.linalg.norm(pAr - pAl)
+    horizB = np.linalg.norm(pBr - pBl)
+    horizC = np.linalg.norm(pCr - pCl)
+    horizD = np.linalg.norm(pDr - pDl)
+    vertA = np.linalg.norm(pAr - pDr)
+    vertB = np.linalg.norm(pAl - pDl)
+    vertC = np.linalg.norm(pBr - pCl)
+    vertD = np.linalg.norm(pBl - pCr)
     #magB = math.sqrt(sum(pow(element, 2) for element in vB))
     #magC = math.sqrt(sum(pow(element, 2) for element in vC))
     #magD = math.sqrt(sum(pow(element, 2) for element in vD))
-    #print(magA,magB,magC, magD)
-    resultA = np.inner(vAa, vAb)
-    resultB = np.inner(vBa, vBb)
-    resultC = np.inner(vCa, vCb)
-    resultD = np.inner(vDa, vDb)
+    resultA = np.inner(pAr, pAl)
+    resultB = np.inner(pBr, pBl)
+    resultC = np.inner(pCr, pCl)
+    resultD = np.inner(pDr, pDl)
+    #print(resultA, resultB, resultC, resultD)
+    print(horizA, horizB, horizC, horizD)
+    print(vertA, vertB, vertC, vertD)
     return True
 
 
