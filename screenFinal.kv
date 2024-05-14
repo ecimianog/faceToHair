@@ -1,4 +1,4 @@
-<ResultScreen>:
+<FinalScreen>:
     MDScrollView:
         do_scroll_x:False
         do_scroll_y:True
@@ -10,16 +10,18 @@
             padding:10
             spacing:10
             Image:
-                id:image
+                id:imageF
                 resolution:(640,480)
-            Image:
-                id:image2
-                source: 'images/n.png'
+            Button:
+                id:imageB
+                size_hint: .8, .8
+                pos_hint: {"x":0.35, "y":0.3}
+                on_press: root.callback()
             MDTextField:
                 id:name2
                 hint_text:"Nombre"
                 font_size: 30
             MDRaisedButton:
-                id:name3
-                text:"Volver"
-                on_release:root.captureyouface()
+                id: btnExit
+                text: "Exit"
+                on_press: app.stop() 

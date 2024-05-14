@@ -19,7 +19,7 @@ import cv2
 kivysome.enable(kivysome.LATEST, group=kivysome.FontGroup.REGULAR)
 Window.size = (350, 900)
 
-Builder.load_file("homescreen.kv")
+Builder.load_file("screenHome.kv")
 
 
 class Homescreen(MDScreen):
@@ -50,7 +50,7 @@ class Homescreen(MDScreen):
             self.ids.cameraBox.add_widget(self.myimage)
             self.resultbox = self.ids.resultbox
         print('Starting capture')
-        Clock.schedule_interval(self.load_video, 1.0/30.0)
+        self.event = Clock.schedule_interval(self.load_video, 1.0/30.0)
 
     def load_video(self, *args):
         # print('Capture1')
@@ -77,36 +77,23 @@ class Homescreen(MDScreen):
         self.buttonCamera.icon = "camera-flip-outline"
 
     def captureyouface(self):
-        print('self.mycamera', self.mycamera.texture)
+        #print('self.mycamera', self.mycamera.texture)
         path = "images"
-        # Check whether the specified path exists or not
         if not os.path.exists(path):
             os.makedirs(path)
         path = path + "\myimage_" + time.strftime("%Y%m%d_%H%M%S") + ".png"
 
-        # EXPORT CAMERA CAPTURE TO PNG IMAGE
-        self.mycamera.export_to_png(path)
+        # Guarda imagen
+        self.myimage.export_to_png(path)
+        self.event.cancel()
         self.myimage.source = path
-        self.resultbox.add_widget(
-            OneLineAvatarListItem(
-                ImageLeftWidget(
-                    source=path,
-                    size_hint_x=0.3,
-                    size_hint_y=1,
-                    size=(300, 300)
-                ),
-                text=self.ids.name.text
-            )
-
-        )
-        self.mycamera.play = False
+        print(0)
+        self.mycamera.release()
+        print(1)
         self.clear_widgets()
-        texture = self.mycamera.texture
-        size = texture.size
-        pixels = texture.pixels
-        pil_image = PIL.Image.frombytes(mode='RGBA', size=size, data=pixels)
-
-        self.add_widget(ResultScreen(path, pil_image))
+        print(2)
+        self.add_widget(ResultScreen(path, self.myimage))
+        print(3)
 
     def hidemd(self):
         if dt.hidemd():
@@ -121,7 +108,7 @@ class Homescreen(MDScreen):
             self.ids.HSLib.text = "Show Lib"
 
 
-Builder.load_file("resultScreen.kv")
+Builder.load_file("screenResult.kv")
 
 
 class ResultScreen(MDScreen):
@@ -131,19 +118,42 @@ class ResultScreen(MDScreen):
         # GET SELECTOR FROM KV FILE CAMERA
         print(valor)
         self.val = valor
-        self.myimage = self.ids.image
-        self.myimage.source = self.val
+        self.myimage1 = self.ids.image1
+        self.myimage1.background_normal = valor
+        self.myimage1.background_down = valor
+        self.myimage2 = self.ids.image2
+        self.myimage2.background_normal = valor
+        self.myimage2.background_down = valor
+        self.myimage3 = self.ids.image3
+        self.myimage3.background_normal = valor
+        self.myimage3.background_down = valor
         print('aquí 4')
-        self.mybox = self.ids.name2
-        self.mybox1 = self.ids.name3
-        self.myimage.texture = FaceDetector(valor)
 
-    def captureyouface(self):
-        # CREATE TIMESTAMP NOT FOR YOU FILE IMAGE
-        # THIS SCRIPT GET TIME MINUTES AND DAY NOW
-        print('vuelve')
+    def selected(self, valSelected):
+        print('sigue', valSelected)
         self.clear_widgets()
-        self.add_widget(ResultScreen2('última', self.val))
+        self.add_widget(FinalScreen(self.val))
+
+    def callback(self):
+        print("button pressed")
+
+
+Builder.load_file("screenFinal.kv")
+
+
+class FinalScreen(MDScreen):
+
+    def __init__(self, imagen, **kwargs):
+        super(FinalScreen, self).__init__(**kwargs)
+        self.val = imagen
+        self.myimage = self.ids.imageF
+        self.myimage.source = self.val
+        self.mybutton = self.ids.imageB
+        self.mybutton.background_normal = self.val
+        self.mybutton.background_down = self.val
+
+    def callback(self):
+        print("button pressed")
 
 
 class MyApp(MDApp):
