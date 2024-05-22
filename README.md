@@ -10,10 +10,12 @@ Instalación:
 python 3.10
 download https://github.com/z-mahmud22/Dlib_Windows_Python3.x
 download https://github.com/tzutalin/dlib-android/blob/master/data/shape_predictor_68_face_landmarks.dat
-pip install -r requirements.txt
 
+pip install virtualenv
 python3.10 -m virtualenv v
 v\Scripts\activate
+pip install -r requirements.txt
+
 python3.10 -m pip install "kivy[base,media]" kivy_examples
 python3.10 -m pip install kivymd
 python3.10 -m pip install opencv-python
