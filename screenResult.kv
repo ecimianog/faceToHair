@@ -7,22 +7,22 @@
             orientation: 'vertical'
             size_hint_y: 0.9
             pos_hint:{"center_y":0.8}
-            padding:3
-            spacing:1
+            padding:10
+            spacing:10
             Button:
                 id:image1
-                size_hint: .4, .3
-                pos_hint: {"x":0.2, "y":0.1}
+                size: cm(5), cm(4)
+                pos_hint: {"x":0.1, "y":0.1}
                 on_press: root.selected(0)
             Button:
                 id:image2
-                size_hint: .4, .3
-                pos_hint: {"x":0.2, "y":0.1}
+                size: cm(6), cm(3)
+                pos_hint: {"x":0.1, "y":0.1}
                 on_press: root.selected(1)
             Button:
                 id:image3
-                size_hint: .4, .3
-                pos_hint: {"x":0.2, "y":0.1}
+                size: cm(4), cm(2)
+                pos_hint: {"x":0.1, "y":0.1}
                 on_press: root.selected(2)
             MDRaisedButton:
                 id:name3

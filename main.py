@@ -17,7 +17,7 @@ import PIL
 import cv2
 
 kivysome.enable(kivysome.LATEST, group=kivysome.FontGroup.REGULAR)
-Window.size = (350, 900)
+Window.size = (350, 600)
 
 Builder.load_file("screenHome.kv")
 

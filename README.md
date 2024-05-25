@@ -27,3 +27,6 @@ cd faceToHair
 python3.10 main.py
 
 https://pictogrammers.com/library/mdi/
+
+Android:
+En la carpeta Android se encuentra un notebook para transformar la aplicación en APK.
