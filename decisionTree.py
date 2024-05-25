@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import time
 
 sqliteConnection = sqlite3.connect('pre.db')
 cursor = sqliteConnection.cursor()
@@ -24,6 +25,7 @@ def createDataBase():
 
 def insertDecision(listPoints, model):
     valuesString = False
+    now = time.strftime("%Y%m%d_%H%M%S")
     for l in listPoints:
         if valuesString:
             valuesString = f"{valuesString}, '{l}'"
@@ -31,7 +33,7 @@ def insertDecision(listPoints, model):
             valuesString = f"'{l}'"
     try:
         cursor.execute(
-            f"INSERT INTO listasBorrar VALUES ('{valuesString}', '{title}', {model})")
+            f"INSERT INTO listasBorrar VALUES ('{valuesString}', '{now}', {model})")
     except:
         print('Error inserting values in DB.')
     sqliteConnection.commit()
