@@ -203,6 +203,6 @@ def lookFront(image):
                 break
 
             if valid:
-                return face_oval_marks
+                return [valid, face_oval_marks]
             else:
-                return valid
+                return [valid, text]
