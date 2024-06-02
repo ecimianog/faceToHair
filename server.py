@@ -32,8 +32,6 @@ def subir_imagen():
             archivo.save(os.path.join(
                 UPLOAD_FOLDER, nombre_archivo + cStr + '.png'))
             return cStr
-            return get_image(nombre_archivo)
-            # Devolver una respuesta de éxito
             return redirect(url_for('index'))
         elif not saveImage:
             image_bytes = archivo.read()
@@ -68,7 +66,7 @@ def get_image(filename):
 
 @app.route('/')
 def index():
-    # Mostrar un mensaje de bienvenida
+    # Mensaje de bienvenida para Index
     return "Servidor para subir imágenes"
 
 

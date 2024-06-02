@@ -65,9 +65,9 @@ def headPoints(cap):
         _, frame = cap.read()
         _, frames = cap.read()
         # print('Capture')
-        # Se captura en blanco y negro para facilitar el proceso
         lookFront = hd.lookFront(frames)
         if lookFront[0]:
+            # Se captura en escala de grises para facilitar el proceso
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             getRatios(lookFront[1])
             # La imagen se pasa al detector de la librería

@@ -9,12 +9,12 @@
             pos_hint:{"center_y":0.8}
             padding:10
             spacing:10
-            MDLabel:
-                id:label
-                text: "Capturando imagen"
             Camera:
                 id:camera
                 play:True
+            MDLabel:
+                id:label
+                text: "Capturando imagen"
             MDRaisedButton:
                 text:"Envía"
                 on_release:root.sendImage()

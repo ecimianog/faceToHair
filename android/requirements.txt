@@ -1,4 +1,13 @@
-requests
-pillow
 kivy
 kivymd
+requests
+pillow
+numpy
+opencv-python
+buildozer
+#sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+#sudo apt install gnutls-bin
+#git config --global http.version HTTP/1.1
+#git config --global http.postBuffer 1048576000
+#git config --global https.postBuffer 1048576000
+#ndk api 24
