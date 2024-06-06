@@ -206,3 +206,6 @@ def lookFront(image):
                 return [valid, face_oval_marks]
             else:
                 return [valid, text]
+
+    else:
+        return [False, 'Colóquese frente a la cámara']

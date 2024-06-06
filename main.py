@@ -90,9 +90,16 @@ class Homescreen(MDScreen):
         print(0)
         self.mycamera.release()
         print(1)
+
+        pathImg = "hairStyles"
+        pathImgs = ['01a', '01b', '01c', '02a']
+        pathImgA = pathImg + "\\" + pathImgs[0] + ".jpg"
+        pathImgB = pathImg + "\\" + pathImgs[1] + ".jpg"
+        pathImgC = pathImg + "\\" + pathImgs[2] + ".jpg"
         self.clear_widgets()
         print(2)
-        self.add_widget(ResultScreen(path, self.myimage))
+        self.add_widget(ResultScreen(
+            pathImgA, pathImgB, pathImgC, path))
         print(3)
 
     def hidemd(self):
@@ -113,20 +120,20 @@ Builder.load_file("screenResult.kv")
 
 class ResultScreen(MDScreen):
 
-    def __init__(self, valor, imagen, **kwargs):
+    def __init__(self, pathImgA, pathImgB, pathImgC, imagen, **kwargs):
         super(ResultScreen, self).__init__(**kwargs)
         # GET SELECTOR FROM KV FILE CAMERA
-        print(valor)
-        self.val = valor
+        print(imagen)
+        self.val = imagen
         self.myimage1 = self.ids.image1
-        self.myimage1.background_normal = valor
-        self.myimage1.background_down = valor
+        self.myimage1.background_normal = pathImgA
+        self.myimage1.background_down = pathImgA
         self.myimage2 = self.ids.image2
-        self.myimage2.background_normal = valor
-        self.myimage2.background_down = valor
+        self.myimage2.background_normal = pathImgB
+        self.myimage2.background_down = pathImgB
         self.myimage3 = self.ids.image3
-        self.myimage3.background_normal = valor
-        self.myimage3.background_down = valor
+        self.myimage3.background_normal = pathImgC
+        self.myimage3.background_down = pathImgC
         print('aquí 4')
 
     def selected(self, valSelected):
