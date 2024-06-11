@@ -92,7 +92,7 @@ class Homescreen(MDScreen):
         print(1)
 
         pathImg = "hairStyles"
-        pathImgs = ['01a', '01b', '01c', '02a']
+        pathImgs = dt.getModel()
         pathImgA = pathImg + "\\" + pathImgs[0] + ".jpg"
         pathImgB = pathImg + "\\" + pathImgs[1] + ".jpg"
         pathImgC = pathImg + "\\" + pathImgs[2] + ".jpg"
