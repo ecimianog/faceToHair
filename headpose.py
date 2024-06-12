@@ -40,7 +40,8 @@ FACE_OVAL_LANDMARKS = [10, 338, 297, 332, 284, 251, 389, 356, 356,
                        378, 400, 400, 377, 377, 152, 152, 148, 148, 176, 176, 149, 149, 150, 150,
                        136, 136, 172, 172, 58, 58, 132, 132, 93, 93, 234, 234, 127, 127, 162, 162,
                        21, 21, 54, 54, 103, 103, 67, 67, 109, 109, 10]
-FACE_OVAL_PASS = [10, 389, 361, 400, 152, 176, 132, 162]
+FACE_OVAL_PASS = [10, 152, 162, 389, 132, 361, 400, 176]
+FACE_OVAL_PASS_ID = ['pTop', 'pDown', 'pAl', 'pAr', 'pBr', 'pBl', 'pCr', 'pCl']
 
 showThis = True
 
@@ -54,7 +55,7 @@ def hidemd():
 
 
 def lookFront(image):
-    face_oval_marks = []
+    face_oval_marks = {}
     #print("Head Pose")
     image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
     image.flags.writeable = False
@@ -138,7 +139,8 @@ def lookFront(image):
                         [face_landmarks.landmark[idx]])
 
                 if idx in FACE_OVAL_PASS:
-                    face_oval_marks.append(lm)
+                    ind = FACE_OVAL_PASS.index(idx)
+                    face_oval_marks[FACE_OVAL_PASS_ID[ind]] = lm
 
             face_2d = np.array(face_2d, dtype=np.float64)
             face_3d = np.array(face_3d, dtype=np.float64)

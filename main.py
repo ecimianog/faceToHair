@@ -126,15 +126,13 @@ class ResultScreen(MDScreen):
         print(imagen)
         self.val = imagen
         self.myimage1 = self.ids.image1
-        self.myimage1.background_normal = pathImgA
-        self.myimage1.background_down = pathImgA
+        self.myimage1.source = pathImgA
         self.myimage2 = self.ids.image2
-        self.myimage2.background_normal = pathImgB
-        self.myimage2.background_down = pathImgB
+        self.myimage2.source = pathImgB
         self.myimage3 = self.ids.image3
-        self.myimage3.background_normal = pathImgC
-        self.myimage3.background_down = pathImgC
-        print('aquí 4')
+        self.myimage3.source = pathImgC
+        self.myimage4 = self.ids.image4
+        self.myimage4.source = pathImgC
 
     def selected(self, valSelected):
         print('sigue', valSelected)
