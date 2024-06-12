@@ -43,8 +43,8 @@ def insertDecision(listPoints, model):
 def getDecision(listPoints):
     models = {'heart': ['01a', '01b', '01c'], 'ellipse': ['02a', '02b', '02c'], 'rectangle': ['03a', '03b', '03c'], 'square': [
         '04a', '04b', '04c'], 'circle': ['05a', '05b', '05c'], 'rhomb': ['06a', '06b', '06c'], }
+    resultA, resultB, resultC, resultD = getRatios(listPoints)
     return models['rectangle']
-    resultA, resultB, resultC, resultD = getDecision(listPoints)
 
 
 def getRatios(marks):
