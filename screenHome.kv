@@ -9,6 +9,10 @@
             pos_hint:{"center_y":0.8}
             padding:10
             spacing:10
+            MDLabel:
+                id:info
+                text:"Captura"
+                size_hint_y: 0.1
             MDBoxLayout:
                 id:cameraBox
                 orientation: 'vertical'
@@ -17,6 +21,8 @@
                 padding:10
                 spacing:10
             MDRaisedButton:
+                id: capture
+                disabled: 'True'
                 text:"Captura"
                 on_release:root.captureyouface()
             MDRaisedButton:
@@ -27,8 +33,6 @@
                 id: HSMd
                 text:"Hide MD"
                 on_release:root.hidemd()
-            MDList:
-                id:resultbox
             MDRaisedButton:
                 id: btnExit
                 text: "Exit"

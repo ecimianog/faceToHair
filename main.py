@@ -3,6 +3,7 @@ from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 from kivy.core.window import Window
 from kivy.uix.image import Image
+from kivymd.uix.label import MDLabel
 from kivymd.uix.list import MDList, OneLineAvatarListItem, ImageLeftWidget
 from kivymd.uix.button import MDRaisedButton, MDIconButton
 from kivy.clock import Clock
@@ -48,18 +49,23 @@ class Homescreen(MDScreen):
                 self.ids.cameraBox.add_widget(self.buttonCamera)
             self.myimage = Image()
             self.ids.cameraBox.add_widget(self.myimage)
-            self.resultbox = self.ids.resultbox
+            self.info = self.ids.info
         print('Starting capture')
         self.event = Clock.schedule_interval(self.load_video, 1.0/30.0)
 
     def load_video(self, *args):
         # print('Capture1')
-        frame = dt.headPoints(self.mycamera)
+        message, frame = dt.headPoints(self.mycamera)
         buffer = cv2.flip(frame, 0).tobytes()
         texture = Texture.create(
             size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
         texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         self.myimage.texture = texture
+        self.info.text = message
+        if message == 'Calculando...':
+            self.ids.capture.disabled = False
+        else:
+            self.ids.capture.disabled = True
         # print('Capture2')
 
     def change_camera(self, *args):

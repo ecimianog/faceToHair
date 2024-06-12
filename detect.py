@@ -28,14 +28,19 @@ def hidelib():
 
 def headPoints(cap):
     global points
+    message = ''
     while cap.isOpened():
         # Se captura la pantalla
         _, frame = cap.read()
         _, frames = cap.read()
         # print('Capture')
-        lookFront = hd.lookFront(frames)
-        if lookFront[0]:
-            points = lookFront[1]
+        result = hd.lookFront(frames)
+        if result and result[0]:
+            message = 'Calculando...'
+            points = result[1]
+        else:
+            message = result[1]
+        if result[0]:
             # Se captura en escala de grises para facilitar el proceso
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # La imagen se pasa al detector de la librería
@@ -75,7 +80,7 @@ def headPoints(cap):
         if key == 27:
             break
 
-        return frame
+        return message, frame
 
 
 def getModel():

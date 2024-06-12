@@ -40,8 +40,9 @@ FACE_OVAL_LANDMARKS = [10, 338, 297, 332, 284, 251, 389, 356, 356,
                        378, 400, 400, 377, 377, 152, 152, 148, 148, 176, 176, 149, 149, 150, 150,
                        136, 136, 172, 172, 58, 58, 132, 132, 93, 93, 234, 234, 127, 127, 162, 162,
                        21, 21, 54, 54, 103, 103, 67, 67, 109, 109, 10]
-FACE_OVAL_PASS = [10, 152, 162, 389, 132, 361, 400, 176]
-FACE_OVAL_PASS_ID = ['pTop', 'pDown', 'pAl', 'pAr', 'pBr', 'pBl', 'pCr', 'pCl']
+FACE_OVAL_PASS = [10, 152, 332, 103, 389, 162, 361, 132, 400, 176]
+FACE_OVAL_PASS_ID = ['pTop', 'pDown', 'pAr', 'pAl',
+                     'pBr', 'pBl', 'pCr', 'pCl', 'pDr', 'pDl']
 
 showThis = True
 
@@ -116,7 +117,7 @@ def lookFront(image):
 
             oval_landmarksD = landmark_pb2.NormalizedLandmarkList()
             oval_landmarksD.landmark.extend(
-                [face_landmarks.landmark[id] for id in FACE_OVAL_LANDMARKS])
+                [face_landmarks.landmark[id] for id in FACE_OVAL_PASS])
             mp_drawing.draw_landmarks(
                 image=image,
                 landmark_list=oval_landmarksD,
@@ -205,9 +206,9 @@ def lookFront(image):
                 break
 
             if valid:
-                return [valid, face_oval_marks]
+                return [True, face_oval_marks]
             else:
-                return [valid, text]
+                return [False, text]
 
     else:
         return [False, 'Colóquese frente a la cámara']
