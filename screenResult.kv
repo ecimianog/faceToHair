@@ -5,31 +5,45 @@
         MDBoxLayout:
             id:mybox
             orientation: 'vertical'
-            size_hint_y: 0.9
             pos_hint:{"center_y":0.8}
             padding:10
             spacing:10
-            Image:
-                id:image1
-                size: cm(5), cm(4)
-                pos_hint: {"x":0.1, "y":0.1}
-                on_touch_down: root.selected(0)
-            Image:
-                id:image2
-                size: cm(6), cm(3)
-                pos_hint: {"x":0.1, "y":0.1}
-                on_touch_down: root.selected(1)
-            Image:
-                id:image3
-                size: cm(4), cm(2)
-                pos_hint: {"x":0.1, "y":0.1}
-                on_touch_down: root.selected(2)
-            Image:
-                id:image4
-                size: cm(4), cm(2)
-                pos_hint: {"x":0.1, "y":0.1}
-                on_touch_down: root.selected(2)
+            GridLayout:
+                cols:2
+                Image:
+                    id:image1
+                    size: cm(5), cm(4)
+                    pos_hint: {"x":0.1, "y":0.1}
+                Button:
+                    id:backB
+                    text:"Seleccionar"
+                    size: cm(5), cm(0.5)
+                    on_release:root.selected(0)
+                Image:
+                    id:image2
+                    size: cm(6), cm(3)
+                    pos_hint: {"x":0.1, "y":0.1}
+                Button:
+                    id:backB
+                    text:"Seleccionar"
+                    on_release:root.selected(1)
+                Image:
+                    id:image3
+                    size: cm(4), cm(2)
+                    pos_hint: {"x":0.1, "y":0.1}
+                Button:
+                    id:backB
+                    text:"Seleccionar"
+                    on_release:root.selected(2)
+                Image:
+                    id:image4
+                    size: cm(4), cm(2)
+                    pos_hint: {"x":0.1, "y":0.1}
+                Button:
+                    id:backB
+                    text:"Seleccionar"
+                    on_release:root.selected(3)
             MDRaisedButton:
-                id:name3
+                id:backB
                 text:"Volver"
                 on_release:root.callback()

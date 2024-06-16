@@ -12,15 +12,14 @@
             Image:
                 id:imageF
                 resolution:(640,480)
-            Button:
-                id:imageB
-                size_hint: .8, .8
-                pos_hint: {"x":0.35, "y":0.3}
-                on_press: root.callback()
             MDTextField:
                 id:name2
                 hint_text:"Nombre"
                 font_size: 30
+            MDRaisedButton:
+                id: btnSave
+                text: "Guardar"
+                on_press: app.stop() 
             MDRaisedButton:
                 id: btnExit
                 text: "Exit"

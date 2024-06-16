@@ -3,6 +3,7 @@ from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 from kivy.core.window import Window
 from kivy.uix.image import Image
+from kivy.uix.gridlayout import GridLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.list import MDList, OneLineAvatarListItem, ImageLeftWidget
 from kivymd.uix.button import MDRaisedButton, MDIconButton
@@ -14,7 +15,6 @@ import kivysome
 import detect as dt
 import time
 import os
-import PIL
 import cv2
 
 kivysome.enable(kivysome.LATEST, group=kivysome.FontGroup.REGULAR)
@@ -98,14 +98,15 @@ class Homescreen(MDScreen):
         print(1)
 
         pathImg = "hairStyles"
-        pathImgs = dt.getModel()
-        pathImgA = pathImg + "\\" + pathImgs[0] + ".jpg"
-        pathImgB = pathImg + "\\" + pathImgs[1] + ".jpg"
-        pathImgC = pathImg + "\\" + pathImgs[2] + ".jpg"
+        rImgs = dt.getModel()
+        pathImgA = pathImg + "\\" + rImgs[0] + ".jpg"
+        pathImgB = pathImg + "\\" + rImgs[1] + ".jpg"
+        pathImgC = pathImg + "\\" + rImgs[2] + ".jpg"
+        pathImgD = pathImg + "\\" + rImgs[3] + ".jpg"
+        pathImgs = [pathImgA, pathImgB, pathImgC, pathImgD]
         self.clear_widgets()
         print(2)
-        self.add_widget(ResultScreen(
-            pathImgA, pathImgB, pathImgC, path))
+        self.add_widget(ResultScreen(pathImgs, path))
         print(3)
 
     def hidemd(self):
@@ -126,27 +127,39 @@ Builder.load_file("screenResult.kv")
 
 class ResultScreen(MDScreen):
 
-    def __init__(self, pathImgA, pathImgB, pathImgC, imagen, **kwargs):
+    def __init__(self, pathImgs, imagen, **kwargs):
         super(ResultScreen, self).__init__(**kwargs)
         # GET SELECTOR FROM KV FILE CAMERA
         print(imagen)
         self.val = imagen
+        self.valSelected = False
+        self.pathImgs = pathImgs
         self.myimage1 = self.ids.image1
-        self.myimage1.source = pathImgA
+        self.myimage1.source = pathImgs[0]
         self.myimage2 = self.ids.image2
-        self.myimage2.source = pathImgB
+        self.myimage2.source = pathImgs[1]
         self.myimage3 = self.ids.image3
-        self.myimage3.source = pathImgC
+        self.myimage3.source = pathImgs[2]
         self.myimage4 = self.ids.image4
-        self.myimage4.source = pathImgC
+        self.myimage4.source = pathImgs[3]
 
     def selected(self, valSelected):
-        print('sigue', valSelected)
+        self.valSelected = valSelected
+        print('Seleccionado', valSelected)
         self.clear_widgets()
-        self.add_widget(FinalScreen(self.val))
+        self.add_widget(FinalScreen(self.pathImgs[valSelected]))
+
+    def selectedD(self):
+        print('Seleccionado D')
+        self.clear_widgets()
+        self.add_widget(FinalScreen(self.pathImgs[3]))
 
     def callback(self):
-        print("button pressed")
+        self.ids.backB.text = 'Volviendo'
+        self.ids.backB.set_disabled(True)
+        print('Volviendo')
+        self.clear_widgets()
+        self.add_widget(Homescreen())
 
 
 Builder.load_file("screenFinal.kv")
@@ -159,9 +172,6 @@ class FinalScreen(MDScreen):
         self.val = imagen
         self.myimage = self.ids.imageF
         self.myimage.source = self.val
-        self.mybutton = self.ids.imageB
-        self.mybutton.background_normal = self.val
-        self.mybutton.background_down = self.val
 
     def callback(self):
         print("button pressed")
