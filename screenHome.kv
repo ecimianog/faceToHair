@@ -25,14 +25,17 @@
                 disabled: 'True'
                 text:"Captura"
                 on_release:root.captureyouface()
-            MDRaisedButton:
-                id: HSLib
-                text:"Hide Lib"
-                on_release:root.hidelib()
-            MDRaisedButton:
-                id: HSMd
-                text:"Hide MD"
-                on_release:root.hidemd()
+            GridLayout:
+                cols:2
+                size_hint_y: 0.2
+                MDRaisedButton:
+                    id: HSLib
+                    text:"Hide Lib"
+                    on_release:root.hidelib()
+                MDRaisedButton:
+                    id: HSMd
+                    text:"Hide MD"
+                    on_release:root.hidemd()
             MDRaisedButton:
                 id: btnExit
                 text: "Exit"

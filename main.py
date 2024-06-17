@@ -93,9 +93,7 @@ class Homescreen(MDScreen):
         self.myimage.export_to_png(path)
         self.event.cancel()
         self.myimage.source = path
-        print(0)
         self.mycamera.release()
-        print(1)
 
         pathImg = "hairStyles"
         rImgs = dt.getModel()
@@ -105,9 +103,7 @@ class Homescreen(MDScreen):
         pathImgD = pathImg + "\\" + rImgs[3] + ".jpg"
         pathImgs = [pathImgA, pathImgB, pathImgC, pathImgD]
         self.clear_widgets()
-        print(2)
         self.add_widget(ResultScreen(pathImgs, path))
-        print(3)
 
     def hidemd(self):
         if dt.hidemd():
