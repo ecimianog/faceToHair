@@ -50,11 +50,16 @@ def subir_imagen():
             return "Error al subir la imagen"
 
 
-@app.route('/get_image/<filename>')
+@app.route('/get_image/<filename>', methods=['POST'])
 def get_image(filename):
+    if request.method == 'POST':
+        # Obtener el archivo de imagen
+        qqq = request.args.get('params')
     # Get the image path from the upload directory
-    image_path = os.path.join(UPLOAD_FOLDER, filename)
-    print(1)
+        print(qqq)
+        print(filename)
+        return 'whichi'
+        image_path = os.path.join(UPLOAD_FOLDER, filename)
     # Check if the image file exists
     if os.path.exists(image_path):
         # Send the image file as a response
