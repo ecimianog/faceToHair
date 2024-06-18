@@ -5,7 +5,9 @@ import cv2
 import numpy as np
 from headpose import lookFront
 from io import BytesIO
+import decisionTree as dt
 
+models = []
 counter = 0
 app = Flask(__name__)
 
@@ -42,6 +44,7 @@ def subir_imagen():
                 image_bytes, np.uint8), cv2.IMREAD_COLOR)
             result = lookFront(frame)
             if result and result[0]:
+                setModel(result[1])
                 return 'Calculando...'
             else:
                 return result[1]
@@ -57,22 +60,34 @@ def get_image(filename):
         qqq = request.args.get('params')
     # Get the image path from the upload directory
         print(qqq)
-        print(filename)
-        return 'whichi'
-        image_path = os.path.join(UPLOAD_FOLDER, filename)
-    # Check if the image file exists
-    if os.path.exists(image_path):
-        # Send the image file as a response
-        return send_from_directory(UPLOAD_FOLDER, filename)
-    else:
-        # Return a 404 error if the image is not found
-        return abort(404)
+        print(models[int(filename)])
+        return send_from_directory("hairStyles", models[int(filename)])
 
 
 @app.route('/')
 def index():
     # Mensaje de bienvenida para Index
     return "Servidor para subir imágenes"
+
+
+def setModel(points):
+    global models
+    #_, frames = cap.read()
+    print(1)
+    #lookFront = hd.lookFront(frames)
+    print(2)
+    rImgs = dt.getDecision(points)
+    print(3)
+    pathImg = "hairStyles"
+    pathImgA = os.path.join(pathImg, rImgs[0] + ".jpg")
+    pathImgB = os.path.join(pathImg, rImgs[1] + ".jpg")
+    pathImgC = os.path.join(pathImg, rImgs[2] + ".jpg")
+    pathImgD = os.path.join(pathImg, rImgs[3] + ".jpg")
+    pathImgA = rImgs[0] + ".jpg"
+    pathImgB = rImgs[1] + ".jpg"
+    pathImgC = rImgs[2] + ".jpg"
+    pathImgD = rImgs[3] + ".jpg"
+    models = [pathImgA, pathImgB, pathImgC, pathImgD]
 
 
 if __name__ == '__main__':

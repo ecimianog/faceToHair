@@ -9,6 +9,7 @@ from kivymd.uix.screen import MDScreen
 from kivymd.app import MDApp
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.core.image import Image as CoreImage
 
 Builder.load_file("screenHomeAndroid.kv")
 Window.size = (350, 600)
@@ -49,25 +50,56 @@ class Homescreen(MDScreen):
             self.label.text = returned
             print(9, returned)
             if returned == 'Calculando...':
-                self.sendedImage()
+                self.event.cancel()
+                # self.mycamera.release()
+                self.clear_widgets()
+                self.add_widget(ResultScreen())
         else:
             print("Error al enviar la imagen:", response.status_code)
+
+
+Builder.load_file("screenResultAndroid.kv")
+
+
+class ResultScreen(MDScreen):
+
+    def __init__(self, **kwargs):
+        super(ResultScreen, self).__init__(**kwargs)
+        # GET SELECTOR FROM KV FILE CAMERA
+        self.myimage = []
+        self.myimage.append(self.ids.image0)
+        self.myimage.append(self.ids.image1)
+        self.myimage.append(self.ids.image2)
+        self.myimage.append(self.ids.image3)
+        self.sendedImage()
 
     def sendedImage(self):
         print(99999999999999999999999999999999)
         url = "http://192.168.1.3:5000/get_image/"
         response = requests.post(url+'0', params=0)
         if response.status_code == 200:
-            print(response.content)
+            buf = BytesIO(response.content)
+            cim = CoreImage(buf, ext='jpg')
+            self.myimage[0].texture = cim.texture
+            print('myimage1')
         response = requests.post(url+'1', params=0)
         if response.status_code == 200:
-            print(response.content)
+            buf = BytesIO(response.content)
+            cim = CoreImage(buf, ext='jpg')
+            self.myimage[1].texture = cim.texture
+            print('myimage2')
         response = requests.post(url+'2', params=0)
         if response.status_code == 200:
-            print(response.content)
+            buf = BytesIO(response.content)
+            cim = CoreImage(buf, ext='jpg')
+            self.myimage[2].texture = cim.texture
+            print('myimage3')
         response = requests.post(url+'3', params=0)
         if response.status_code == 200:
-            print(response.content)
+            buf = BytesIO(response.content)
+            cim = CoreImage(buf, ext='jpg')
+            self.myimage[3].texture = cim.texture
+            print('myimage4')
         elif False:
             # Convert the image data to a PIL Image object
             image = Image.open(BytesIO(image_data))
@@ -76,30 +108,11 @@ class Homescreen(MDScreen):
             self.clear_widgets()
             self.add_widget(ResultScreen(image))
 
-
-Builder.load_file("screenResultAndroid.kv")
-
-
-class ResultScreen(MDScreen):
-
-    def __init__(self, Imgs, **kwargs):
-        super(ResultScreen, self).__init__(**kwargs)
-        # GET SELECTOR FROM KV FILE CAMERA
-        self.Imgs = Imgs
-        self.myimage1 = self.ids.image1
-        self.myimage1.source = Imgs[0]
-        self.myimage2 = self.ids.image2
-        self.myimage2.source = Imgs[1]
-        self.myimage3 = self.ids.image3
-        self.myimage3.source = Imgs[2]
-        self.myimage4 = self.ids.image4
-        self.myimage4.source = Imgs[3]
-
     def selected(self, valSelected):
         self.valSelected = valSelected
         print('Seleccionado', valSelected)
         self.clear_widgets()
-        self.add_widget(FinalScreen(self.Imgs[valSelected]))
+        self.add_widget(FinalScreen(self.myimage[valSelected]))
 
     def callback(self):
         self.ids.backB.text = 'Volviendo'
@@ -118,7 +131,7 @@ class FinalScreen(MDScreen):
         super(FinalScreen, self).__init__(**kwargs)
         self.val = imagen
         self.myimage = self.ids.imageF
-        self.myimage.source = self.val
+        self.myimage.texture = self.val.texture
 
     def callback(self):
         print("button pressed")

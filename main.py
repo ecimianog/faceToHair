@@ -78,7 +78,7 @@ class Homescreen(MDScreen):
         self.buttonCamera.set_disabled(True)
         print('Changing camera to ', self.selectedCamera)
         self.mycamera = cv2.VideoCapture(self.selectedCamera)
-        print('Change camera to ', self.selectedCamera)
+        print('Changed camera to ', self.selectedCamera)
         self.buttonCamera.set_disabled(False)
         self.buttonCamera.icon = "camera-flip-outline"
 
@@ -97,10 +97,10 @@ class Homescreen(MDScreen):
 
         pathImg = "hairStyles"
         rImgs = dt.getModel()
-        pathImgA = pathImg + "\\" + rImgs[0] + ".jpg"
-        pathImgB = pathImg + "\\" + rImgs[1] + ".jpg"
-        pathImgC = pathImg + "\\" + rImgs[2] + ".jpg"
-        pathImgD = pathImg + "\\" + rImgs[3] + ".jpg"
+        pathImgA = os.path.join(pathImg, rImgs[0] + ".jpg")
+        pathImgB = os.path.join(pathImg, rImgs[1] + ".jpg")
+        pathImgC = os.path.join(pathImg, rImgs[2] + ".jpg")
+        pathImgD = os.path.join(pathImg, rImgs[3] + ".jpg")
         pathImgs = [pathImgA, pathImgB, pathImgC, pathImgD]
         self.clear_widgets()
         self.add_widget(ResultScreen(pathImgs, path))
