@@ -112,7 +112,7 @@ class ResultScreen(MDScreen):
         self.valSelected = valSelected
         print('Seleccionado', valSelected)
         self.clear_widgets()
-        self.add_widget(FinalScreen(self.myimage[valSelected]))
+        self.add_widget(FinalScreen(self.myimage[valSelected], valSelected))
 
     def callback(self):
         self.ids.backB.text = 'Volviendo'
@@ -127,14 +127,19 @@ Builder.load_file("screenFinalAndroid.kv")
 
 class FinalScreen(MDScreen):
 
-    def __init__(self, imagen, **kwargs):
+    def __init__(self, imagen, valSelected, **kwargs):
         super(FinalScreen, self).__init__(**kwargs)
-        self.val = imagen
+        self.image = imagen
+        self.valSelected = valSelected
         self.myimage = self.ids.imageF
-        self.myimage.texture = self.val.texture
+        self.myimage.texture = self.image.texture
 
-    def callback(self):
-        print("button pressed")
+    def saveFinal(self):
+        name = self.ids.name.text
+        payload = {'name': name}
+        url = "http://192.168.1.3:5000/save_decision/"
+        response = requests.post(url+'0', params=payload)
+        MyApp().stop()
 
 
 class MyApp(MDApp):

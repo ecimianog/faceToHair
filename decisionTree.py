@@ -3,41 +3,58 @@ import time
 import numpy as np
 import random
 
-sqliteConnection = sqlite3.connect('pre.db')
-cursor = sqliteConnection.cursor()
-
 
 def createDataBase():
     # SQL create a table in the database
     sql_command = """CREATE TABLE decisions ( 
-    lineHA INTEGER,
-    lineHB INTEGER,
-    lineHC INTEGER,
-    lineHD INTEGER,
-    lineVA INTEGER,
-    lineVB INTEGER,
-    lineVC INTEGER,
-    lineVD INTEGER,
+    pTop text,
+    pAl text,
+    pCl text,
+    pDown text,
+    pBl text,
+    pDl text,
+    pMl text,
+    pAr text,
+    pCr text,
+    pBr text,
+    pDr text,
+    pMr text,
+    name text,
     modelSelected INTEGER, 
     date INTEGER);"""
+    sqliteConnection = sqlite3.connect('historic.db', check_same_thread=False)
+    cursor = sqliteConnection.cursor()
 
     cursor.execute(sql_command)
 
+    # createDataBase()
+    # close the connection
+    sqliteConnection.close()
 
-def insertDecision(listPoints, model):
+
+def insertDecision(listPoints, model, name):
+    sqliteConnection = sqlite3.connect('historic.db', check_same_thread=False)
+    cursor = sqliteConnection.cursor()
     valuesString = False
     now = time.strftime("%Y%m%d_%H%M%S")
+    query = f"'{listPoints['pTop']}', '{listPoints['pAl']}', '{listPoints['pCl']}', '{listPoints['pDown']}', '{listPoints['pBl']}', '{listPoints['pDl']}', '{listPoints['pMl']}', '{listPoints['pAr']}', '{listPoints['pCr']}', '{listPoints['pBr']}', '{listPoints['pDr']}', '{listPoints['pMr']}'"
     for l in listPoints:
         if valuesString:
-            valuesString = f"{valuesString}, '{l}'"
+            valuesString = f"{valuesString}, '{listPoints[l]}'"
         else:
-            valuesString = f"'{l}'"
+            valuesString = f"'{listPoints[l]}'"
+        print(l)
+    print(valuesString)
     try:
+        print(
+            f"INSERT INTO decisions VALUES ({query}, '{name}', '{model}', '{now}')")
         cursor.execute(
-            f"INSERT INTO listasBorrar VALUES ('{valuesString}', '{now}', {model})")
-    except:
+            f"INSERT INTO decisions VALUES ({query}, '{name}', '{model}', '{now}')")
+    except sqlite3.Error as er:
+        print(er.args)
         print('Error inserting values in DB.')
     sqliteConnection.commit()
+    sqliteConnection.close()
 
 
 def getDecision(listPoints):
@@ -144,5 +161,3 @@ def getRatios(marks):
 
 
 # createDataBase()
-# close the connection
-sqliteConnection.close()

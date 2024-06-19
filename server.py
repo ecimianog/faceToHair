@@ -7,8 +7,10 @@ from headpose import lookFront
 from io import BytesIO
 import decisionTree as dt
 
+modelsPath = []
 models = []
 counter = 0
+listPoints = []
 app = Flask(__name__)
 
 # Definir directorio para guardar imágenes
@@ -53,15 +55,27 @@ def subir_imagen():
             return "Error al subir la imagen"
 
 
-@app.route('/get_image/<filename>', methods=['POST'])
-def get_image(filename):
+@app.route('/get_image/<id>', methods=['POST'])
+def get_image(id):
     if request.method == 'POST':
         # Obtener el archivo de imagen
         qqq = request.args.get('params')
     # Get the image path from the upload directory
         print(qqq)
-        print(models[int(filename)])
-        return send_from_directory("hairStyles", models[int(filename)])
+        print(modelsPath[int(id)])
+        return send_from_directory("hairStyles", modelsPath[int(id)])
+
+
+@app.route('/save_decision/<id>', methods=['POST'])
+def save_decision(id):
+    if request.method == 'POST':
+        # Obtener el archivo de imagen
+        name = request.args.get('name')
+        print(1, modelsPath[int(id)])
+        print(2, name)
+        dt.insertDecision(listPoints, models[int(id)], name)
+        # sendDecision(id)
+        return 'True'
 
 
 @app.route('/')
@@ -71,12 +85,16 @@ def index():
 
 
 def setModel(points):
+    global listPoints
+    global modelsPath
     global models
     #_, frames = cap.read()
     print(1)
     #lookFront = hd.lookFront(frames)
     print(2)
     rImgs = dt.getDecision(points)
+    listPoints = points
+    models = rImgs
     print(3)
     pathImg = "hairStyles"
     pathImgA = os.path.join(pathImg, rImgs[0] + ".jpg")
@@ -87,7 +105,7 @@ def setModel(points):
     pathImgB = rImgs[1] + ".jpg"
     pathImgC = rImgs[2] + ".jpg"
     pathImgD = rImgs[3] + ".jpg"
-    models = [pathImgA, pathImgB, pathImgC, pathImgD]
+    modelsPath = [pathImgA, pathImgB, pathImgC, pathImgD]
 
 
 if __name__ == '__main__':
