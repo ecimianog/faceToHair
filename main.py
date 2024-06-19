@@ -103,7 +103,7 @@ class Homescreen(MDScreen):
         pathImgD = os.path.join(pathImg, rImgs[3] + ".jpg")
         pathImgs = [pathImgA, pathImgB, pathImgC, pathImgD]
         self.clear_widgets()
-        self.add_widget(ResultScreen(pathImgs, path))
+        self.add_widget(ResultScreen(pathImgs, path, rImgs))
 
     def hidemd(self):
         if dt.hidemd():
@@ -123,11 +123,12 @@ Builder.load_file("screenResult.kv")
 
 class ResultScreen(MDScreen):
 
-    def __init__(self, pathImgs, imagen, **kwargs):
+    def __init__(self, pathImgs, imagen, models, **kwargs):
         super(ResultScreen, self).__init__(**kwargs)
         # GET SELECTOR FROM KV FILE CAMERA
         print(imagen)
         self.val = imagen
+        self.models = models
         self.valSelected = False
         self.pathImgs = pathImgs
         self.myimage1 = self.ids.image1
@@ -143,12 +144,8 @@ class ResultScreen(MDScreen):
         self.valSelected = valSelected
         print('Seleccionado', valSelected)
         self.clear_widgets()
-        self.add_widget(FinalScreen(self.pathImgs[valSelected]))
-
-    def selectedD(self):
-        print('Seleccionado D')
-        self.clear_widgets()
-        self.add_widget(FinalScreen(self.pathImgs[3]))
+        self.add_widget(FinalScreen(
+            self.pathImgs[valSelected], self.models[valSelected], valSelected))
 
     def callback(self):
         self.ids.backB.text = 'Volviendo'
@@ -163,14 +160,18 @@ Builder.load_file("screenFinal.kv")
 
 class FinalScreen(MDScreen):
 
-    def __init__(self, imagen, **kwargs):
+    def __init__(self, imagen, model, valSelected, **kwargs):
         super(FinalScreen, self).__init__(**kwargs)
         self.val = imagen
+        self.model = model
+        self.valSelected = valSelected
         self.myimage = self.ids.imageF
         self.myimage.source = self.val
 
-    def callback(self):
-        print("button pressed")
+    def saveFinal(self):
+        name = self.ids.name.text
+        dt.save_decision(self.model, name)
+        MyApp().stop()
 
 
 class MyApp(MDApp):

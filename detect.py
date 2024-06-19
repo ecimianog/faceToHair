@@ -91,3 +91,7 @@ def getModel():
     models = dt.getDecision(points)
     print(3)
     return models
+
+
+def save_decision(model, name):
+    dt.insertDecision(points, model, name)
