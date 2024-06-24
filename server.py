@@ -13,10 +13,8 @@ counter = 0
 listPoints = []
 app = Flask(__name__)
 
-# Definir directorio para guardar imágenes
 UPLOAD_FOLDER = os.path.join(app.instance_path, 'imagenes')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-print(UPLOAD_FOLDER)
 
 
 @app.route('/subir_imagen', methods=['POST'])
@@ -26,9 +24,7 @@ def subir_imagen():
     if request.method == 'POST':
         global counter
         counter += 1
-        # Obtener el archivo de imagen
         archivo = request.files['imagen']
-        # Verificar si el archivo es válido
         if saveImage and archivo and archivo.filename:
             # Guardar el archivo con un nombre seguro
             nombre_archivo = secure_filename(archivo.filename)
@@ -36,12 +32,9 @@ def subir_imagen():
             archivo.save(os.path.join(
                 UPLOAD_FOLDER, nombre_archivo + cStr + '.png'))
             return cStr
-            return redirect(url_for('index'))
+            # return redirect(url_for('index'))
         elif not saveImage:
             image_bytes = archivo.read()
-
-            # Read the image data from BytesIO
-            #image = cv2.imread(img_io)
             frame = cv2.imdecode(np.frombuffer(
                 image_bytes, np.uint8), cv2.IMREAD_COLOR)
             result = lookFront(frame)
@@ -51,7 +44,6 @@ def subir_imagen():
             else:
                 return result[1]
         else:
-            # Devolver una respuesta de error
             return "Error al subir la imagen"
 
 
@@ -59,22 +51,14 @@ def subir_imagen():
 def get_image(id):
     if request.method == 'POST':
         # Obtener el archivo de imagen
-        qqq = request.args.get('params')
-    # Get the image path from the upload directory
-        print(qqq)
-        print(modelsPath[int(id)])
         return send_from_directory("hairStyles", modelsPath[int(id)])
 
 
 @app.route('/save_decision/<id>', methods=['POST'])
 def save_decision(id):
     if request.method == 'POST':
-        # Obtener el archivo de imagen
         name = request.args.get('name')
-        print(1, modelsPath[int(id)])
-        print(2, name)
         dt.insertDecision(listPoints, models[int(id)], name)
-        # sendDecision(id)
         return 'True'
 
 
@@ -88,14 +72,9 @@ def setModel(points):
     global listPoints
     global modelsPath
     global models
-    #_, frames = cap.read()
-    print(1)
-    #lookFront = hd.lookFront(frames)
-    print(2)
     rImgs = dt.getDecision(points)
     listPoints = points
     models = rImgs
-    print(3)
     pathImg = "hairStyles"
     pathImgA = os.path.join(pathImg, rImgs[0] + ".jpg")
     pathImgB = os.path.join(pathImg, rImgs[1] + ".jpg")

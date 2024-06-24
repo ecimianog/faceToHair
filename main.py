@@ -42,7 +42,6 @@ class Homescreen(MDScreen):
         print("Starting program")
         if not hasattr(self, 'mycamera'):
             self.mycamera = cv2.VideoCapture(0)
-            print('aquí 2')
             if self.numberCameras > 1:
                 self.buttonCamera = MDIconButton(
                     icon='camera-flip-outline', on_release=self.change_camera)
@@ -54,7 +53,6 @@ class Homescreen(MDScreen):
         self.event = Clock.schedule_interval(self.load_video, 1.0/30.0)
 
     def load_video(self, *args):
-        # print('Capture1')
         message, frame = dt.headPoints(self.mycamera)
         buffer = cv2.flip(frame, 0).tobytes()
         texture = Texture.create(
@@ -66,7 +64,6 @@ class Homescreen(MDScreen):
             self.ids.capture.disabled = False
         else:
             self.ids.capture.disabled = True
-        # print('Capture2')
 
     def change_camera(self, *args):
         if self.selectedCamera == self.numberCameras - 1:
@@ -83,7 +80,6 @@ class Homescreen(MDScreen):
         self.buttonCamera.icon = "camera-flip-outline"
 
     def captureyouface(self):
-        #print('self.mycamera', self.mycamera.texture)
         path = "images"
         if not os.path.exists(path):
             os.makedirs(path)
@@ -125,8 +121,6 @@ class ResultScreen(MDScreen):
 
     def __init__(self, pathImgs, imagen, models, **kwargs):
         super(ResultScreen, self).__init__(**kwargs)
-        # GET SELECTOR FROM KV FILE CAMERA
-        print(imagen)
         self.val = imagen
         self.models = models
         self.valSelected = False

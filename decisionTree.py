@@ -43,11 +43,7 @@ def insertDecision(listPoints, model, name):
             valuesString = f"{valuesString}, '{listPoints[l]}'"
         else:
             valuesString = f"'{listPoints[l]}'"
-        print(l)
-    print(valuesString)
     try:
-        print(
-            f"INSERT INTO decisions VALUES ({query}, '{name}', '{model}', '{now}')")
         cursor.execute(
             f"INSERT INTO decisions VALUES ({query}, '{name}', '{model}', '{now}')")
     except sqlite3.Error as er:
@@ -87,7 +83,6 @@ def getMainDecision(listPoints):
             longCross = True
         diferenceH_AM = abs(horizA - horizM)
         if diferenceH_AM < 0.1:
-            mediumHoriz = (horizA + horizM) / 2.0
             diference_VH = abs(horizM - vertMain)
             if diference_VH < 0.2:
                 print('Model square')
@@ -125,7 +120,6 @@ def pointOnLine(vectorA, vectorB, point):
 
 
 def getRatios(marks):
-    print(marks)
     pTop = np.array([marks['pTop'].x, marks['pTop'].y, marks['pTop'].z])
     pDown = np.array([marks['pDown'].x, marks['pDown'].y, marks['pDown'].z])
     pMr = np.array([marks['pMr'].x, marks['pMr'].y, marks['pMr'].z])
@@ -151,12 +145,9 @@ def getRatios(marks):
     #magB = math.sqrt(sum(pow(element, 2) for element in vB))
     #magC = math.sqrt(sum(pow(element, 2) for element in vC))
     #magD = math.sqrt(sum(pow(element, 2) for element in vD))
-    resultA = np.inner(pTop, pDown)
-    resultB = np.inner(pBr, pBl)
-    resultC = np.inner(pCr, pCl)
-    #print(resultA, resultB, resultC, resultD)
-    print(horizA, horizB, horizC, horizD)
-    print(vertMain, vertL, vertR)
+    #resultA = np.inner(pTop, pDown)
+    #resultB = np.inner(pBr, pBl)
+    #resultC = np.inner(pCr, pCl)
     return horizM, horizA, horizB, horizC, horizD, vertMain, vertL, vertR
 
 

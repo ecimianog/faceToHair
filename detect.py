@@ -84,12 +84,7 @@ def headPoints(cap):
 
 
 def getModel():
-    #_, frames = cap.read()
-    print(1)
-    #lookFront = hd.lookFront(frames)
-    print(2)
     models = dt.getDecision(points)
-    print(3)
     return models
 
 

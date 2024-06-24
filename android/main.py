@@ -18,13 +18,8 @@ Window.size = (350, 600)
 class Homescreen(MDScreen):
     def __init__(self, **kwargs):
         super(Homescreen, self).__init__(**kwargs)
-        # GET SELECTOR FROM KV FILE CAMERA
-        print('aquí 1')
-        # self.add_widget(Homescreen())
         if not hasattr(self, 'mycamera'):
             self.mycamera = self.ids.camera
-            print('aquí 2')
-            #self.myimage = Image()
             self.label = self.ids.label
         self.event = Clock.schedule_interval(self.sendImage, 2.0/1.0)
 
@@ -48,7 +43,6 @@ class Homescreen(MDScreen):
             returned = response.content.decode(
                 "utf-8", errors="replace")
             self.label.text = returned
-            print(9, returned)
             if returned == 'Calculando...':
                 self.event.cancel()
                 # self.mycamera.release()
@@ -65,7 +59,6 @@ class ResultScreen(MDScreen):
 
     def __init__(self, **kwargs):
         super(ResultScreen, self).__init__(**kwargs)
-        # GET SELECTOR FROM KV FILE CAMERA
         self.myimage = []
         self.myimage.append(self.ids.image0)
         self.myimage.append(self.ids.image1)
@@ -74,32 +67,27 @@ class ResultScreen(MDScreen):
         self.sendedImage()
 
     def sendedImage(self):
-        print(99999999999999999999999999999999)
         url = "http://192.168.1.3:5000/get_image/"
         response = requests.post(url+'0', params=0)
         if response.status_code == 200:
             buf = BytesIO(response.content)
             cim = CoreImage(buf, ext='jpg')
             self.myimage[0].texture = cim.texture
-            print('myimage1')
         response = requests.post(url+'1', params=0)
         if response.status_code == 200:
             buf = BytesIO(response.content)
             cim = CoreImage(buf, ext='jpg')
             self.myimage[1].texture = cim.texture
-            print('myimage2')
         response = requests.post(url+'2', params=0)
         if response.status_code == 200:
             buf = BytesIO(response.content)
             cim = CoreImage(buf, ext='jpg')
             self.myimage[2].texture = cim.texture
-            print('myimage3')
         response = requests.post(url+'3', params=0)
         if response.status_code == 200:
             buf = BytesIO(response.content)
             cim = CoreImage(buf, ext='jpg')
             self.myimage[3].texture = cim.texture
-            print('myimage4')
         elif False:
             # Convert the image data to a PIL Image object
             image = Image.open(BytesIO(image_data))
