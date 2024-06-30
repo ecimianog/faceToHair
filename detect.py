@@ -33,7 +33,7 @@ def headPoints(cap):
         # Se captura la pantalla
         _, frame = cap.read()
         _, frames = cap.read()
-        # print('Capture')
+        # Se procesa en headpose
         result = hd.lookFront(frames)
         if result and result[0]:
             message = 'Calculando...'

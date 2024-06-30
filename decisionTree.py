@@ -4,8 +4,8 @@ import numpy as np
 import random
 
 
+# SQL crea tabla en una base de datos
 def createDataBase():
-    # SQL create a table in the database
     sql_command = """CREATE TABLE decisions ( 
     pTop text,
     pAl text,
@@ -27,9 +27,9 @@ def createDataBase():
 
     cursor.execute(sql_command)
 
-    # createDataBase()
-    # close the connection
     sqliteConnection.close()
+
+# SQL inserta decisión en la tabla
 
 
 def insertDecision(listPoints, model, name):
@@ -52,15 +52,20 @@ def insertDecision(listPoints, model, name):
     sqliteConnection.commit()
     sqliteConnection.close()
 
+# Recibe la decisión del usuario
+
 
 def getDecision(listPoints):
+    # Lista de modelos
     models = {'heart': ['01a', '01b', '01c'], 'ellipse': ['02a', '02b', '02c'], 'rectangle': ['03a', '03b', '03c'], 'square': [
         '04a', '04b', '04c'], 'circle': ['05a', '05b', '05c'], 'rhomb': ['06a', '06b', '06c'], }
     modelsItems = ['heart', 'ellipse',
                    'rectangle', 'square', 'circle', 'rhomb']
+    # Recibe una decisión según los puntos recibidos
     mainDecision = getMainDecision(listPoints)
     indexMain = modelsItems.index(mainDecision)
     indexItemElse = random.randint(0, 5)
+    # Agrega un modelo aleatorio
     while indexMain == indexItemElse:
         indexItemElse = random.randint(0, 5)
     indexElementElse = random.randint(0, 2)
@@ -68,6 +73,8 @@ def getDecision(listPoints):
     result = models[mainDecision]
     result.append(otherElement)
     return result
+
+# Recibe los puntos del usuario y genera una decisión según los puntos recibidos
 
 
 def getMainDecision(listPoints):
@@ -106,6 +113,8 @@ def getMainDecision(listPoints):
                 print('Model circle')
                 return 'circle'
 
+# Calcula si un punto está en una recta
+
 
 def pointOnLine(vectorA, vectorB, point):
     # Ecuación línea  (x-x1)/(y-y1)=(x2-x1)/(y2-y1)
@@ -117,6 +126,8 @@ def pointOnLine(vectorA, vectorB, point):
         return True
     else:
         return False
+
+# Calcula los ratios de las medidas
 
 
 def getRatios(marks):

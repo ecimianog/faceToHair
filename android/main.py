@@ -21,14 +21,18 @@ class Homescreen(MDScreen):
         if not hasattr(self, 'mycamera'):
             self.mycamera = self.ids.camera
             self.label = self.ids.label
+        # Envía imagen en intervalo de 2 segundos
         self.event = Clock.schedule_interval(self.sendImage, 2.0/1.0)
 
+    # Envia imagen a la API
     def sendImage(self, *args):
         image_texture = self.mycamera.texture  # .export_as_image()
         pixels = image_texture.pixels
+        # Convierte imagen en array
         image_array = np.frombuffer(pixels, dtype=np.uint8)
         image_array = image_array.reshape(
             (image_texture.height, image_texture.width, 4))
+        # Convierte array en imagen Pil
         pil_image = Image.fromarray(image_array)
         img_bytes = BytesIO()
         pil_image.save(img_bytes, format="PNG")
@@ -43,6 +47,7 @@ class Homescreen(MDScreen):
             returned = response.content.decode(
                 "utf-8", errors="replace")
             self.label.text = returned
+            # Si el resultado es 'Calculando...' se ha realizado el cálculo y se pasa a sugerencias
             if returned == 'Calculando...':
                 self.event.cancel()
                 # self.mycamera.release()
@@ -66,6 +71,7 @@ class ResultScreen(MDScreen):
         self.myimage.append(self.ids.image3)
         self.sendedImage()
 
+    # Función para obtener las imágenes enviadas por el servidor
     def sendedImage(self):
         url = "http://192.168.1.3:5000/get_image/"
         response = requests.post(url+'0', params=0)
@@ -89,13 +95,13 @@ class ResultScreen(MDScreen):
             cim = CoreImage(buf, ext='jpg')
             self.myimage[3].texture = cim.texture
         elif False:
-            # Convert the image data to a PIL Image object
+            # Convierte la imagen a objeto PIL
             image = Image.open(BytesIO(image_data))
-            # Display the image
             image.show()
             self.clear_widgets()
             self.add_widget(ResultScreen(image))
 
+    # Si se selecciona imagen se pasa a la pantalla final
     def selected(self, valSelected):
         self.valSelected = valSelected
         print('Seleccionado', valSelected)
@@ -122,6 +128,7 @@ class FinalScreen(MDScreen):
         self.myimage = self.ids.imageF
         self.myimage.texture = self.image.texture
 
+    # Se manda al servidor la decisión con el nombre del usuario
     def saveFinal(self):
         name = self.ids.name.text
         payload = {'name': name}

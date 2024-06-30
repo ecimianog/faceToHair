@@ -29,6 +29,7 @@ class Homescreen(MDScreen):
         index = 0
         self.selectedCamera = 0
         self.numberCameras = 0
+        # Obtener el numero de camaras disponibles
         while True:
             cap = cv2.VideoCapture(index)
             try:
@@ -40,6 +41,7 @@ class Homescreen(MDScreen):
             index += 1
 
         print("Starting program")
+        # Inicializar la camara y crear elementos de interfaz
         if not hasattr(self, 'mycamera'):
             self.mycamera = cv2.VideoCapture(0)
             if self.numberCameras > 1:
@@ -50,9 +52,12 @@ class Homescreen(MDScreen):
             self.ids.cameraBox.add_widget(self.myimage)
             self.info = self.ids.info
         print('Starting capture')
+        # Capturar el video en un hilo diferente
         self.event = Clock.schedule_interval(self.load_video, 1.0/30.0)
 
+    # Carga el video en el widget de imagen y detecta los puntos
     def load_video(self, *args):
+        # Manda la imagen para procesar
         message, frame = dt.headPoints(self.mycamera)
         buffer = cv2.flip(frame, 0).tobytes()
         texture = Texture.create(
@@ -60,11 +65,13 @@ class Homescreen(MDScreen):
         texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         self.myimage.texture = texture
         self.info.text = message
+        # Deshabilitar el botón de captura si no se está calculando, si no se mira de frente
         if message == 'Calculando...':
             self.ids.capture.disabled = False
         else:
             self.ids.capture.disabled = True
 
+    # Cambia la camara
     def change_camera(self, *args):
         if self.selectedCamera == self.numberCameras - 1:
             self.selectedCamera = 0
@@ -79,6 +86,7 @@ class Homescreen(MDScreen):
         self.buttonCamera.set_disabled(False)
         self.buttonCamera.icon = "camera-flip-outline"
 
+    # Captura la imagen
     def captureyouface(self):
         path = "images"
         if not os.path.exists(path):
@@ -91,6 +99,7 @@ class Homescreen(MDScreen):
         self.myimage.source = path
         self.mycamera.release()
 
+        # Recibe modelos y calcula las rutas de las imágenes de modelo
         pathImg = "hairStyles"
         rImgs = dt.getModel()
         pathImgA = os.path.join(pathImg, rImgs[0] + ".jpg")
@@ -134,6 +143,7 @@ class ResultScreen(MDScreen):
         self.myimage4 = self.ids.image4
         self.myimage4.source = pathImgs[3]
 
+    # Si se selecciona imagen, se pasa a la pantalla final
     def selected(self, valSelected):
         self.valSelected = valSelected
         print('Seleccionado', valSelected)
@@ -162,6 +172,7 @@ class FinalScreen(MDScreen):
         self.myimage = self.ids.imageF
         self.myimage.source = self.val
 
+    # Se guarda la decisión final con el nombre del usuario
     def saveFinal(self):
         name = self.ids.name.text
         dt.save_decision(self.model, name)

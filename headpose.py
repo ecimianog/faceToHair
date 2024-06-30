@@ -3,21 +3,24 @@ import numpy as np
 import mediapipe as mp
 from mediapipe.framework.formats import landmark_pb2
 
-mp_face_mesh = mp.solutions.face_mesh
-face_mesh = mp_face_mesh.FaceMesh(
+# Configuracion de mediapipe
+mpFaceMesh = mp.solutions.face_mesh
+faceMesh = mpFaceMesh.FaceMesh(
     min_detection_confidence=0.5, min_tracking_confidence=0.5)
-mp_drawing = mp.solutions.drawing_utils
-drawing_specA = mp_drawing.DrawingSpec(
+# Configuracion de dibujo de puntos en la imagen
+mpDrawing = mp.solutions.drawing_utils
+drawingSpecA = mpDrawing.DrawingSpec(
     color=(0, 255, 0), thickness=1, circle_radius=1)
-drawing_specB = mp_drawing.DrawingSpec(
+drawingSpecB = mpDrawing.DrawingSpec(
     color=(255, 0, 0), thickness=3, circle_radius=1)
-drawing_specC = mp_drawing.DrawingSpec(
+drawingSpecC = mpDrawing.DrawingSpec(
     color=(255, 255, 255), thickness=1, circle_radius=1)
-drawing_specD = mp_drawing.DrawingSpec(
+drawingSpecD = mpDrawing.DrawingSpec(
     color=(255, 100, 0), thickness=3, circle_radius=1)
-drawing_spec = mp_drawing.DrawingSpec(
+drawingSpec = mpDrawing.DrawingSpec(
     color=(0, 0, 0), thickness=1, circle_radius=0)
 
+# Definicion del identificador para dibujar los puntos según zonas de la cara
 EYEBROW_LANDMARKS = [70, 63, 105, 66, 107, 336, 296, 334, 293, 300]
 LIPS_LANDMARKS = [61, 146, 91, 181, 84, 17, 314, 405, 405, 321,
                   321, 375, 375, 291, 61, 185, 185, 40, 40, 39, 39, 37, 37, 0, 0, 267, 267,
@@ -40,11 +43,14 @@ FACE_OVAL_LANDMARKS = [10, 338, 297, 332, 284, 251, 389, 356, 356,
                        378, 400, 400, 377, 377, 152, 152, 148, 148, 176, 176, 149, 149, 150, 150,
                        136, 136, 172, 172, 58, 58, 132, 132, 93, 93, 234, 234, 127, 127, 162, 162,
                        21, 21, 54, 54, 103, 103, 67, 67, 109, 109, 10]
+# Definición de puntos de referencia para devovler
 FACE_OVAL_PASS = [10, 152, 454, 234, 332, 103, 389, 162, 361, 132, 400, 176]
 FACE_OVAL_PASS_ID = ['pTop', 'pDown', 'pMr', 'pMl', 'pAr', 'pAl',
                      'pBr', 'pBl', 'pCr', 'pCl', 'pDr', 'pDl']
 
 showThis = True
+
+# Función para mostrar y ocultar ventana
 
 
 def hidemd():
@@ -54,117 +60,124 @@ def hidemd():
         cv2.destroyWindow('Imagen con puntos separados')
     return showThis
 
+# Función de la imagen con los puntos de referencia
+
 
 def lookFront(image):
-    face_oval_marks = {}
-    #print("Head Pose")
+    faceOvalMarks = {}
+    # Se prepara la imagen para procesarla
     image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
     image.flags.writeable = False
-    face = face_mesh.process(image)
+    face = faceMesh.process(image)
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    img_h, img_w, img_c = image.shape
-    face_3d = []
-    face_2d = []
+    imgH, imgW, imgC = image.shape
+    face3d = []
+    face2d = []
 
     if face.multi_face_landmarks:
-        for face_landmarks in face.multi_face_landmarks:
-            for id in EYEBROW_LANDMARKS:
-                lm = face_landmarks.landmark[id]
-                # writer.writerow({'frame_num':frame_num,'landmark_x':lm.x,'landmark_y':lm.y})
+        # Si la imagen tiene puntos detectados, se realiza el proceso
+        for faceLandmarks in face.multi_face_landmarks:
+            """ for id in EYEBROW_LANDMARKS:
+                lm = faceLandmarks.landmark[id]
+                writer.writerow({'frame_num':frame_num,'landmark_x':lm.x,'landmark_y':lm.y})
 
             for id in LIPS_LANDMARKS:
-                lm = face_landmarks.landmark[id]
-                # writer.writerow({'frame_num':frame_num,'landmark_x':lm.x,'landmark_y':lm.y})
-
-            eyebrow_landmarksA = landmark_pb2.NormalizedLandmarkList()
-            eyebrow_landmarksA.landmark.extend(
-                [face_landmarks.landmark[id] for id in LEFT_EYEBROW_LANDMARKS])
-            eyebrow_landmarksA.landmark.extend(
-                [face_landmarks.landmark[id] for id in RIGHT_EYEBROW_LANDMARKS])
-            mp_drawing.draw_landmarks(
+                lm = faceLandmarks.landmark[id]
+                writer.writerow({'frame_num':frame_num,'landmark_x':lm.x,'landmark_y':lm.y}) """
+            # Se itera por los puntos de la cara y se guardan en una lista según el tipo de punto
+            # Cejas
+            eyebrowLandmarksA = landmark_pb2.NormalizedLandmarkList()
+            eyebrowLandmarksA.landmark.extend(
+                [faceLandmarks.landmark[id] for id in LEFT_EYEBROW_LANDMARKS])
+            eyebrowLandmarksA.landmark.extend(
+                [faceLandmarks.landmark[id] for id in RIGHT_EYEBROW_LANDMARKS])
+            mpDrawing.draw_landmarks(
                 image=image,
-                landmark_list=eyebrow_landmarksA,
+                landmark_list=eyebrowLandmarksA,
                 connections=[],
-                landmark_drawing_spec=drawing_specA,
-                connection_drawing_spec=drawing_specA
+                landmark_drawing_spec=drawingSpecA,
+                connection_drawing_spec=drawingSpecA
             )
-
-            lips_landmarksB = landmark_pb2.NormalizedLandmarkList()
-            lips_landmarksB.landmark.extend(
-                [face_landmarks.landmark[id] for id in LIPS_LANDMARKS])
-            mp_drawing.draw_landmarks(
+            # Labios
+            lipsLandmarksB = landmark_pb2.NormalizedLandmarkList()
+            lipsLandmarksB.landmark.extend(
+                [faceLandmarks.landmark[id] for id in LIPS_LANDMARKS])
+            mpDrawing.draw_landmarks(
                 image=image,
-                landmark_list=lips_landmarksB,
+                landmark_list=lipsLandmarksB,
                 connections=[],
-                landmark_drawing_spec=drawing_specB,
-                connection_drawing_spec=drawing_specB
+                landmark_drawing_spec=drawingSpecB,
+                connection_drawing_spec=drawingSpecB
             )
-
-            eye_landmarksC = landmark_pb2.NormalizedLandmarkList()
-            eye_landmarksC.landmark.extend(
-                [face_landmarks.landmark[id] for id in RIGHT_EYE_LANDMARKS])
-            eye_landmarksC.landmark.extend(
-                [face_landmarks.landmark[id] for id in LEFT_EYE_LANDMARKS])
-            mp_drawing.draw_landmarks(
+            # Ojos
+            eyeLandmarksC = landmark_pb2.NormalizedLandmarkList()
+            eyeLandmarksC.landmark.extend(
+                [faceLandmarks.landmark[id] for id in RIGHT_EYE_LANDMARKS])
+            eyeLandmarksC.landmark.extend(
+                [faceLandmarks.landmark[id] for id in LEFT_EYE_LANDMARKS])
+            mpDrawing.draw_landmarks(
                 image=image,
-                landmark_list=eye_landmarksC,
+                landmark_list=eyeLandmarksC,
                 connections=[],
-                landmark_drawing_spec=drawing_specC,
-                connection_drawing_spec=drawing_specC
+                landmark_drawing_spec=drawingSpecC,
+                connection_drawing_spec=drawingSpecC
             )
-
-            oval_landmarksD = landmark_pb2.NormalizedLandmarkList()
-            oval_landmarksD.landmark.extend(
-                [face_landmarks.landmark[id] for id in FACE_OVAL_PASS])
-            mp_drawing.draw_landmarks(
+            # Óvalo de la cara limitando a los puntos de control
+            ovalLandmarksD = landmark_pb2.NormalizedLandmarkList()
+            ovalLandmarksD.landmark.extend(
+                [faceLandmarks.landmark[id] for id in FACE_OVAL_PASS])
+            mpDrawing.draw_landmarks(
                 image=image,
-                landmark_list=oval_landmarksD,
+                landmark_list=ovalLandmarksD,
                 connections=[],
-                landmark_drawing_spec=drawing_specD,
-                connection_drawing_spec=drawing_specD
+                landmark_drawing_spec=drawingSpecD,
+                connection_drawing_spec=drawingSpecD
             )
-
-            rest_landmarks = landmark_pb2.NormalizedLandmarkList()
-            for idx, lm in enumerate(face_landmarks.landmark):
+            # Se prepara otra lista para el resto de puntos
+            restLandmarks = landmark_pb2.NormalizedLandmarkList()
+            for idx, lm in enumerate(faceLandmarks.landmark):
+                # Puntos de control para la orientación de la cabeza
                 if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
-                    x, y = int(lm.x * img_w), int(lm.y * img_h)
+                    x, y = int(lm.x * imgW), int(lm.y * imgH)
 
-                    face_2d.append([x, y])
+                    face2d.append([x, y])
 
-                    face_3d.append([x, y, lm.z])
-
+                    face3d.append([x, y, lm.z])
+                # Se agregan a la lista de restantes los correspondientes
                 if idx not in LEFT_EYEBROW_LANDMARKS and idx not in RIGHT_EYEBROW_LANDMARKS and idx not in LIPS_LANDMARKS and idx not in LEFT_EYE_LANDMARKS and idx not in LEFT_IRIS_LANDMARKS and idx not in RIGHT_EYE_LANDMARKS and idx not in RIGHT_IRIS_LANDMARKS and idx not in FACE_OVAL_LANDMARKS:
-                    rest_landmarks.landmark.extend(
-                        [face_landmarks.landmark[idx]])
-
+                    restLandmarks.landmark.extend(
+                        [faceLandmarks.landmark[idx]])
+                # Se agrega a la lista de puntos para el óvalo
                 if idx in FACE_OVAL_PASS:
                     ind = FACE_OVAL_PASS.index(idx)
-                    face_oval_marks[FACE_OVAL_PASS_ID[ind]] = lm
+                    faceOvalMarks[FACE_OVAL_PASS_ID[ind]] = lm
 
-            face_2d = np.array(face_2d, dtype=np.float64)
-            face_3d = np.array(face_3d, dtype=np.float64)
-
-            focal_length = 1 * img_w
-
-            cam_matrix = np.array([[focal_length, 0, img_h / 2],
-                                   [0, focal_length, img_h / 2],
-                                   [0, 0, 1]])
-
-            dist_matrix = np.zeros((4, 1), dtype=np.float64)
-
+            # Conversión a arrays numpy.
+            face2d = np.array(face2d, dtype=np.float64)
+            face3d = np.array(face3d, dtype=np.float64)
+            # Longitud focal estimada.
+            focalLength = 1 * imgW
+            # Matriz de la cámara.
+            camMatrix = np.array([[focalLength, 0, imgH / 2],
+                                  [0, focalLength, imgH / 2],
+                                  [0, 0, 1]])
+            # Matriz de distorsión (asumida como cero).
+            distMatrix = np.zeros((4, 1), dtype=np.float64)
+            # Calcula los datos de pose para encontrar la rotación y la traslación de la cabeza.
             success, rot_vec, trans_vec = cv2.solvePnP(
-                face_3d, face_2d, cam_matrix, dist_matrix)
-
+                face3d, face2d, camMatrix, distMatrix)
+            # Convierte el vector de rotación a matriz de rotación
             rmat, jac = cv2.Rodrigues(rot_vec)
-
+            # Descompone la matriz de rotación en ángulos de Euler
             angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
-
+            # Rotación en grados.
             x = angles[0] * 360
             y = angles[1] * 360
             z = angles[2] * 360
 
+            # Establece un margen de admisión para tomar la orientación como correcta y crea un mensaje
             valid = False
             text = ' - Mire de frente'
             if y < -10:
@@ -179,24 +192,22 @@ def lookFront(image):
                 text = ''
                 valid = True
 
-            #print(text, x, y)
-
-            # print(face_landmarks)
+            # Si se muestra la ventana, se muestra el texto generado
             if showThis:
-                cv2.putText(image, text, (20, 50),
-                            cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
+                cv2.putText(image, text, (20, 450),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
                 cv2.putText(image, 'x: ' + str(np.round(x, 2)), (500, 50),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
                 cv2.putText(image, 'y: ' + str(np.round(y, 2)), (500, 100),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
                 cv2.putText(image, 'z: ' + str(np.round(z, 2)), (500, 150),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                mp_drawing.draw_landmarks(
+                mpDrawing.draw_landmarks(
                     image=image,
-                    landmark_list=rest_landmarks,
+                    landmark_list=restLandmarks,
                     connections=[],
-                    landmark_drawing_spec=drawing_spec,
-                    connection_drawing_spec=drawing_spec
+                    landmark_drawing_spec=drawingSpec,
+                    connection_drawing_spec=drawingSpec
                 )
                 cv2.imshow('Imagen con puntos separados', image)
 
@@ -204,11 +215,11 @@ def lookFront(image):
             key = cv2.waitKey(1)
             if key == 27:
                 break
-
+            # Envía resultado
             if valid:
-                return [True, face_oval_marks]
+                return [True, faceOvalMarks]
             else:
                 return [False, text]
-
+    # Si la imagen no tiene puntos detectados, se envía respuesta no satisfactoria
     else:
         return [False, 'Colóquese frente a la cámara']

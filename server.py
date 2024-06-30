@@ -16,6 +16,8 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join(app.instance_path, 'imagenes')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Llamada para recibir imagen de la cámara
+
 
 @app.route('/subir_imagen', methods=['POST'])
 def subir_imagen():
@@ -25,6 +27,7 @@ def subir_imagen():
         global counter
         counter += 1
         archivo = request.files['imagen']
+        # Sección no operativa para guardar la imagen en el servidor
         if saveImage and archivo and archivo.filename:
             # Guardar el archivo con un nombre seguro
             nombre_archivo = secure_filename(archivo.filename)
@@ -33,6 +36,7 @@ def subir_imagen():
                 UPLOAD_FOLDER, nombre_archivo + cStr + '.png'))
             return cStr
             # return redirect(url_for('index'))
+        # Sección operativa que recibe la imagen de la cámara y pide el proceso
         elif not saveImage:
             image_bytes = archivo.read()
             frame = cv2.imdecode(np.frombuffer(
@@ -46,12 +50,16 @@ def subir_imagen():
         else:
             return "Error al subir la imagen"
 
+# Llamada para obtener la imagen del modelo sugerido
+
 
 @app.route('/get_image/<id>', methods=['POST'])
 def get_image(id):
     if request.method == 'POST':
         # Obtener el archivo de imagen
         return send_from_directory("hairStyles", modelsPath[int(id)])
+
+# Llamada para guardar la decisión del modelo elegido
 
 
 @app.route('/save_decision/<id>', methods=['POST'])
@@ -62,10 +70,12 @@ def save_decision(id):
         return 'True'
 
 
+# Mensaje de bienvenida para Index
 @app.route('/')
 def index():
-    # Mensaje de bienvenida para Index
     return "Servidor para subir imágenes"
+
+# Guarda los modelos y sus rutas
 
 
 def setModel(points):
@@ -87,5 +97,6 @@ def setModel(points):
     modelsPath = [pathImgA, pathImgB, pathImgC, pathImgD]
 
 
+# Servidor en debug para local
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
