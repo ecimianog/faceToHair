@@ -47,6 +47,7 @@ FACE_OVAL_LANDMARKS = [10, 338, 297, 332, 284, 251, 389, 356, 356,
 FACE_OVAL_PASS = [10, 152, 454, 234, 332, 103, 389, 162, 361, 132, 400, 176]
 FACE_OVAL_PASS_ID = ['pTop', 'pDown', 'pMr', 'pMl', 'pAr', 'pAl',
                      'pBr', 'pBl', 'pCr', 'pCl', 'pDr', 'pDl']
+CONTROL_POINTS_ORIENTATION = [1, 33, 61, 263, 291, 199]
 
 showThis = True
 
@@ -72,20 +73,13 @@ def lookFront(image):
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    imgH, imgW, imgC = image.shape
+    imageHeight, imageWidth, noneC = image.shape
     face3d = []
     face2d = []
 
     if face.multi_face_landmarks:
         # Si la imagen tiene puntos detectados, se realiza el proceso
         for faceLandmarks in face.multi_face_landmarks:
-            """ for id in EYEBROW_LANDMARKS:
-                lm = faceLandmarks.landmark[id]
-                writer.writerow({'frame_num':frame_num,'landmark_x':lm.x,'landmark_y':lm.y})
-
-            for id in LIPS_LANDMARKS:
-                lm = faceLandmarks.landmark[id]
-                writer.writerow({'frame_num':frame_num,'landmark_x':lm.x,'landmark_y':lm.y}) """
             # Se itera por los puntos de la cara y se guardan en una lista según el tipo de punto
             # Cejas
             eyebrowLandmarksA = landmark_pb2.NormalizedLandmarkList()
@@ -139,11 +133,9 @@ def lookFront(image):
             restLandmarks = landmark_pb2.NormalizedLandmarkList()
             for idx, lm in enumerate(faceLandmarks.landmark):
                 # Puntos de control para la orientación de la cabeza
-                if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
-                    x, y = int(lm.x * imgW), int(lm.y * imgH)
-
+                if idx in CONTROL_POINTS_ORIENTATION:
+                    x, y = int(lm.x * imageWidth), int(lm.y * imageHeight)
                     face2d.append([x, y])
-
                     face3d.append([x, y, lm.z])
                 # Se agregan a la lista de restantes los correspondientes
                 if idx not in LEFT_EYEBROW_LANDMARKS and idx not in RIGHT_EYEBROW_LANDMARKS and idx not in LIPS_LANDMARKS and idx not in LEFT_EYE_LANDMARKS and idx not in LEFT_IRIS_LANDMARKS and idx not in RIGHT_EYE_LANDMARKS and idx not in RIGHT_IRIS_LANDMARKS and idx not in FACE_OVAL_LANDMARKS:
@@ -157,51 +149,51 @@ def lookFront(image):
             # Conversión a arrays numpy.
             face2d = np.array(face2d, dtype=np.float64)
             face3d = np.array(face3d, dtype=np.float64)
-            # Longitud focal estimada.
-            focalLength = 1 * imgW
+            # Longitud focal estimada. Se ha de calibrar según la cámara.
+            focalLength = 1 * imageWidth
             # Matriz de la cámara.
-            camMatrix = np.array([[focalLength, 0, imgH / 2],
-                                  [0, focalLength, imgH / 2],
+            camMatrix = np.array([[focalLength, 0, imageHeight / 2],
+                                  [0, focalLength, imageHeight / 2],
                                   [0, 0, 1]])
             # Matriz de distorsión (asumida como cero).
             distMatrix = np.zeros((4, 1), dtype=np.float64)
             # Calcula los datos de pose para encontrar la rotación y la traslación de la cabeza.
-            success, rot_vec, trans_vec = cv2.solvePnP(
+            ss, rotationVector, tv = cv2.solvePnP(
                 face3d, face2d, camMatrix, distMatrix)
             # Convierte el vector de rotación a matriz de rotación
-            rmat, jac = cv2.Rodrigues(rot_vec)
+            rotationMatrix, jc = cv2.Rodrigues(rotationVector)
             # Descompone la matriz de rotación en ángulos de Euler
-            angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
+            angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rotationMatrix)
             # Rotación en grados.
-            x = angles[0] * 360
-            y = angles[1] * 360
-            z = angles[2] * 360
+            xGrades = angles[0] * 360
+            yGrades = angles[1] * 360
+            zGrades = angles[2] * 360
 
             # Establece un margen de admisión para tomar la orientación como correcta y crea un mensaje
             valid = False
-            text = ' - Mire de frente'
-            if y < -10:
-                text = 'Izquierda' + text
-            elif y > 10:
-                text = 'Derecha' + text
-            elif x < -10:
-                text = 'Abajo' + text
-            elif x > 10:
-                text = 'Arriba' + text
+            msg = ' - Mire de frente'
+            if yGrades < -10:
+                msg = 'Izquierda' + msg
+            elif yGrades > 10:
+                msg = 'Derecha' + msg
+            elif xGrades < -10:
+                msg = 'Abajo' + msg
+            elif xGrades > 10:
+                msg = 'Arriba' + msg
             else:
-                text = ''
+                msg = ''
                 valid = True
 
             # Si se muestra la ventana, se muestra el texto generado
             if showThis:
-                cv2.putText(image, text, (20, 450),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
-                cv2.putText(image, 'x: ' + str(np.round(x, 2)), (500, 50),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                cv2.putText(image, 'y: ' + str(np.round(y, 2)), (500, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                cv2.putText(image, 'z: ' + str(np.round(z, 2)), (500, 150),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                cv2.putText(image, msg, (20, 450),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 0, 255), 2)
+                cv2.putText(image, 'x: ' + str(np.round(xGrades, 2)), (500, 50),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                cv2.putText(image, 'y: ' + str(np.round(yGrades, 2)), (500, 100),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                cv2.putText(image, 'z: ' + str(np.round(zGrades, 2)), (500, 150),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
                 mpDrawing.draw_landmarks(
                     image=image,
                     landmark_list=restLandmarks,
@@ -219,7 +211,7 @@ def lookFront(image):
             if valid:
                 return [True, faceOvalMarks]
             else:
-                return [False, text]
+                return [False, msg]
     # Si la imagen no tiene puntos detectados, se envía respuesta no satisfactoria
     else:
         return [False, 'Colóquese frente a la cámara']
