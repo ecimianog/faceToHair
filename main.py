@@ -181,6 +181,7 @@ class FinalScreen(MDScreen):
 
 class MyApp(MDApp):
     def build(self):
+        self.title = 'Face 2 Hair'
         return Homescreen()
 
 

@@ -13,6 +13,7 @@ from kivy.core.image import Image as CoreImage
 
 Builder.load_file("screenHomeAndroid.kv")
 Window.size = (350, 600)
+URL_SERVER = 'http://127.0.0.1:5000/'
 
 
 class Homescreen(MDScreen):
@@ -26,6 +27,7 @@ class Homescreen(MDScreen):
 
     # Envia imagen a la API
     def sendImage(self, *args):
+        url = URL_SERVER + "subir_imagen"  # Cambiar la URL según tu servidor
         image_texture = self.mycamera.texture  # .export_as_image()
         pixels = image_texture.pixels
         # Convierte imagen en array
@@ -38,7 +40,6 @@ class Homescreen(MDScreen):
         pil_image.save(img_bytes, format="PNG")
         img_bytes.seek(0)
         # Enviar solicitud POST con la imagen
-        url = "http://192.168.1.3:5000/subir_imagen"  # Cambiar la URL según tu servidor
         archivos = {"imagen": img_bytes}
         response = requests.post(url, files=archivos)
         # Verificar respuesta
@@ -73,7 +74,7 @@ class ResultScreen(MDScreen):
 
     # Función para obtener las imágenes enviadas por el servidor
     def sendedImage(self):
-        url = "http://192.168.1.3:5000/get_image/"
+        url = URL_SERVER + "get_image/"
         response = requests.post(url+'0', params=0)
         if response.status_code == 200:
             buf = BytesIO(response.content)
@@ -130,15 +131,16 @@ class FinalScreen(MDScreen):
 
     # Se manda al servidor la decisión con el nombre del usuario
     def saveFinal(self):
+        url = URL_SERVER + "save_decision/"
         name = self.ids.name.text
         payload = {'name': name}
-        url = "http://192.168.1.3:5000/save_decision/"
         response = requests.post(url+'0', params=payload)
         MyApp().stop()
 
 
 class MyApp(MDApp):
     def build(self):
+        self.title = "Face 2 Hair"
         return Homescreen()
 
 
