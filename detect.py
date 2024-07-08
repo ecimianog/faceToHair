@@ -75,11 +75,6 @@ def headPoints(cap):
         if showThis:
             cv2.imshow('Imagen para mandar', frame)
 
-        # Se sale con Esc
-        key = cv2.waitKey(1)
-        if key == 27:
-            break
-
         return message, frame
 
 
