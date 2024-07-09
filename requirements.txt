@@ -7,3 +7,4 @@ tensorflow
 tensorflow_addons
 kivysome
 flask
+scikit-learn
