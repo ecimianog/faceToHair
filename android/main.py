@@ -2,7 +2,6 @@ import requests
 import numpy as np
 from io import BytesIO
 from PIL import Image
-import kivy
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen

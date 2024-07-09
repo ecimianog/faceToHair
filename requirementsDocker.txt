@@ -1,0 +1,9 @@
+dlib
+kivy
+kivymd
+opencv-python
+mediapipe
+tensorflow
+tensorflow_addons
+kivysome
+flask
