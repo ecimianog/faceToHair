@@ -42,6 +42,7 @@ O se pueden seguir los siguientes pasos:
 - python3.10 -m pip install mediapipe
 - python3.10 -m pip install "kivy[sdl2]"
 - python3.10 -m pip install kivysome
+- python3.10 -m pip install flask
 - Descargar desde https://github.com/z-mahmud22/Dlib_Windows_Python3.x el siguiente archivo:
 - python3.10 -m pip install dlib-19.22.99-cp310-cp310-win_amd64.whl
 
