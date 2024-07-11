@@ -11,6 +11,16 @@ Consta de 3 partes.
 - Servidor.
 - Cliente.
 
+## Servidor en docker
+
+docker pull ecimianog/fthserver
+
+Creado:
+
+- docker build --tag server-docker .
+- docker tag server-docker ecimianog/fthserver
+- docker push ecimianog/fthserver
+
 ## Instalación Principal y Servidor:
 
 ### Primero instalar python 3.10

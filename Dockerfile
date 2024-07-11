@@ -1,25 +1,57 @@
-# Un archivo docker (dockerfile) comienza siempre importanto la imagen base. 
-# Utilizamos la palabra clave 'FROM' para hacerlo.
-# En nuestro ejemplo, queremos importar la imagen de python.
-# Así que escribimos 'python' para el nombre de la imagen y 'latest' para la versión.
-FROM python:3.10
+# syntax=docker/dockerfile:1
 
-RUN pip install "kivy[base,media]" kivy_examples
-RUN pip install kivymd
-RUN pip install opencv-python
-RUN pip install mediapipe
-RUN pip install "kivy[sdl2]"
-RUN pip install kivysome
-RUN pip install flask
-RUN pip install *.whl
-# Para lanzar nuestro código python, debemos importarlo a nuestra imagen.
-# Utilizamos la palabra clave 'COPY' para hacerlo.
-# El primer parámetro 'main.py' es el nombre del archivo en el host.
-# El segundo parámetro '/' es la ruta donde poner el archivo en la imagen.
-# Aquí ponemos el archivo en la carpeta raíz de la imagen. 
-COPY server.py /
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Dockerfile reference guide at
+# https://docs.docker.com/go/dockerfile-reference/
 
-# Necesitamos definir el comando a lanzar cuando vayamos a ejecutar la imagen.
-# Utilizamos la palabra clave 'CMD' para hacerlo.
-# El siguiente comando ejecutará "python ./main.py".
-CMD [ "python", "./server.py" ]
+# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
+
+ARG PYTHON_VERSION=3.10.11
+FROM python:${PYTHON_VERSION}-slim as base
+
+# Prevents Python from writing pyc files.
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Keeps Python from buffering stdout and stderr to avoid situations where
+# the application crashes without emitting any logs due to buffering.
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y cmake g++ make libgl1-mesa-glx libglib2.0-0 python3-opencv && \
+    rm -rf /var/lib/apt/lists/*
+
+# Instala las dependencias de Python
+RUN pip install --upgrade pip
+COPY  requirementsDocker.txt /app
+# Create a non-privileged user that the app will run under.
+# See https://docs.docker.com/go/dockerfile-user-best-practices/
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
+
+# Download dependencies as a separate step to take advantage of Docker's caching.
+# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
+# Leverage a bind mount to requirements.txt to avoid having to copy them into
+# into this layer.
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=bind,source=requirementsDocker.txt,target=requirementsDocker.txt \
+    python -m pip install -r requirementsDocker.txt
+
+# Switch to the non-privileged user to run the application.
+USER appuser
+
+# Copy the source code into the container.
+COPY . .
+
+# Expose the port that the application listens on.
+EXPOSE 8000
+
+# Run the application.
+CMD [ "python3.10", "-m" , "flask", "run", "--host=0.0.0.0" ]
